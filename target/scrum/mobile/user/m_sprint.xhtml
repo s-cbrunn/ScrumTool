@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+	<script src="../resources/js/push.js"></script>
+</h:head>
+
+<p:growl widgetVar="growl" showDetail="true" life="3000"/>		
+
+<p:socket onMessage="handleMessage" channel="/sprintNotify" >
+	<p:ajax update="showSprints:showSprint" />
+</p:socket>	
+
+
+<h:body>
+
+	<pm:page id="main">
+	 <pm:header title="Sprint" swatch="b">
+	 	<p:commandButton id="btn-basic" value="Menu" type="button" icon="ui-icon-bars" styleClass="ui-btn-inline" />
+	 </pm:header>
+	 <pm:content styleClass="jqm-content">
+		<h:form>
+			<ui:repeat var="backlog" value="#{backlogs}">
+				<p:commandButton value="Backlog - #{backlog.name}" icon="ui-icon-carat-r" iconPos="right"  action="#{sprintController.doSelectedBacklog(backlog)}" update="showSprints"/>
+			</ui:repeat>
+		</h:form>
+	</pm:content>
+
+
+	<p:overlayPanel for="btn-basic" widgetVar="pnl-basic" at="left" showEffect="overlay">
+		<p:graphicImage value="../resources/img/logo.png" />
+		<p:menu>
+			<p:menuitem value="Overview" url="../user/m_overview.jsf" />
+			<p:menuitem value="Team" url="../master/m_team.jsf" />
+			<p:menuitem value="Backlog" url="../master/m_backlog.jsf" />
+			<p:menuitem value="Sprint" url="../user/m_sprint.jsf" />
+			<p:menuitem value="Taskboard" url="../user/m_taskboard.jsf" />
+			<p:menuitem value="Burndown" url="../user/m_burndown.jsf" />
+		</p:menu>
+	</p:overlayPanel>
+</pm:page>
+
+<pm:page id="showSprints" lazy="true">
+<pm:header title="#{msg['sprint.header']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="showSprint">
+    	<p:commandButton value="#{msg['sprint.addSprint']}" icon="ui-icon-plus" iconPos="left" action="#{sprintController.doAddSprintMobile()}" update="addSprint" />
+ 
+    	
+    	<p:separator style="margin-top:30px;"/>
+    	
+		<p:dataTable var="backlogitem" value="#{sprintController.selectedBacklog.items}" liveResize="true" emptyMessage="Keine Backlogitems vorhanden" lazy="true">		
+    						<p:column headerText="#{msg['backlog.editBacklogitem']}">
+   	     						<p:commandButton id="editBacklogitem"  action="#{sprintController.doSelectBacklogitemMobile(backlogitem)}"  icon="ui-icon-search" styleClass="ui-btn-inline" update="showBacklogitem"/>
+    						</p:column> 
+    						<p:column headerText="#{msg['backlog.thema']}">
+        						<h:outputText value="#{backlogitem.thema}" />
+    						</p:column>
+    						<p:column headerText="#{msg['backlog.story']}">
+        						<h:outputText value="#{backlogitem.story}" />
+    						</p:column>
+    						<p:column headerText="#{msg['backlog.accept']}">
+        						<h:outputText value="#{backlogitem.accept}" />
+    						</p:column>
+   	 						<p:column headerText="#{msg['backlog.type']}">
+   	     						<h:outputText value="#{backlogitem.type}" />
+    						</p:column>
+    						<p:column headerText="#{msg['backlog.estimate']}">
+   	     						<h:outputText value="#{backlogitem.estimate}" />
+    						</p:column>
+    						<p:column headerText="#{msg['backlog.assign']}">
+   	     						<p:commandButton id="deleteBacklogitem" action="#{sprintController.doSelectBacklogitemAssign(backlogitem)}"  icon="ui-icon-action" styleClass="ui-btn-inline" update="assignBacklogitem"/>
+    						</p:column>      						
+		</p:dataTable>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+<pm:page id="showBacklogitem" lazy="true">
+<pm:header title="#{msg['backlog.showBacklogitem']}" swatch="b">
+	<p:button outcome="pm:showSprints?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+</pm:header>
+             
+    <pm:content>
+    <h:form id="showBacklogitemForm" >
+		<p:panelGrid columns="2" layout="grid" style="width:100%" >
+			<h:outputText value="#{msg['backlog.name']}:" />
+			<h:outputText value="#{selectedBacklogitem.thema}"/>
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<h:outputText value="#{selectedBacklogitem.story}" />
+			<h:outputText value="#{msg['backlog.accept']}:" />
+			<h:outputText value="#{selectedBacklogitem.accept}" />
+			<h:outputText value="#{msg['backlog.type']}:" />
+            <h:outputText value="#{selectedBacklogitem.type}" />
+            <h:outputText value="#{msg['backlog.estimate']}:" />
+			<h:outputText value="#{selectedBacklogitem.estimate}" />
+		</p:panelGrid>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+<pm:page id="assignBacklogitem" lazy="true">
+<pm:header title="#{msg['backlog.assign']}" swatch="b">
+	<p:button outcome="pm:showSprints?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+</pm:header>
+             
+    <pm:content>
+    <h:form id="showBacklogitemForm" >
+		<ui:repeat var="sprint" value="#{sprintController.selectedBacklog.sprints}">
+				<p:commandButton value="Sprint - #{sprint.name}" icon="ui-icon-tag" iconPos="left"  action="#{sprintController.doAssignBacklogitem(sprint)}" update="showSprints" rendered="#{sprint.status == 'Plan'}"/>
+		</ui:repeat>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+<pm:page id="addSprint" lazy="true">
+<pm:header title="#{msg['backlog.assign']}" swatch="b">
+	<p:button outcome="pm:showSprints?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+</pm:header>
+             
+    <pm:content>
+    <h:form id="addSprintForm" >
+		<p:panelGrid id="addSprintGrid" columns="3" layout="grid" >
+		
+			<h:outputText value="#{msg['sprint.name']}:*" />
+			<p:inputText id="name" value="#{selectedSprint.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['sprint.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedSprint.description}"/>
+			<p:message for="description" display="icon"/>
+			
+			<h:outputText value="#{msg['sprint.startDate']}:" />
+			<p:calendar id="startdate" mindate="calwidget.today()" pattern="dd.MM.yyyy" value="#{selectedSprint.start}" required="true"/>
+			<p:message for="startdate" display="icon"/>	
+			
+			<h:outputText value="#{msg['sprint.endDate']}:" />
+			<p:calendar id="enddate" mindate="calwidget.today()" pattern="dd.MM.yyyy" value="#{selectedSprint.end}" required="true"/>
+			<p:message for="enddate" display="icon"/>		
+		</p:panelGrid>
+		<p:commandButton value="#{msg['sprint.save']}" action="#{sprintController.doAddSprintSaveMobile()}" icon="ui-icon-check" update="showSprints" />
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+
+</h:body>
+</html>

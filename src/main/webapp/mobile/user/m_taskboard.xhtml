@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+	<script src="../resources/js/push.js"></script>
+</h:head>
+
+<p:growl widgetVar="growl" showDetail="true" life="3000"/>		
+
+<p:socket onMessage="handleMessage" channel="/taskNotify" >
+	<p:ajax update="showTaskboard:taskboard main:sprints" />
+</p:socket>	
+
+<h:body>
+
+	<pm:page id="main">
+	 <pm:header title="#{msg['taskboard.header']}" swatch="b">
+	 	<p:commandButton id="btn-basic" value="Menu" type="button" icon="ui-icon-bars" styleClass="ui-btn-inline" />
+	 </pm:header>
+	 <pm:content styleClass="jqm-content">
+			<h:form id="sprints">
+		<ui:repeat var="sprint" value="#{sprints}">
+			<p:commandButton value="Sprint - #{sprint.name}" icon="ui-icon-carat-r" action="#{taskboardController.doSelectedSprint(sprint)}" iconPos="right"  update="showTaskboard"/>
+		</ui:repeat>
+	</h:form>
+	</pm:content>
+
+
+	<p:overlayPanel for="btn-basic" widgetVar="pnl-basic" at="left"
+		showEffect="overlay">
+		<p:graphicImage value="../resources/img/logo.png" />
+		<p:menu>
+			<p:menuitem value="Overview" url="../user/m_overview.jsf" />
+			<p:menuitem value="Team" url="../master/m_team.jsf" />
+			<p:menuitem value="Backlog" url="../master/m_backlog.jsf" />
+			<p:menuitem value="Sprint" url="../user/m_sprint.jsf" />
+			<p:menuitem value="Taskboard" url="../user/m_taskboard.jsf" />
+			<p:menuitem value="Burndown" url="../user/m_burndown.jsf" />
+		</p:menu>
+	</p:overlayPanel>
+</pm:page>
+
+<pm:page id="showTaskboard" lazy="true">
+	<pm:header title="#{msg['sprint.header']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+	</pm:header>
+	<h:form id="taskboard">
+		<p:commandButton value="#{msg['taskboard.closeSprint']}" action="#{taskboardController.doCloseSprint}" rendered="#{request.isUserInRole('Master')}" icon="ui-icon-lock" update="main:sprints"/>
+		<p:commandButton value="#{msg['backlog.showBacklogitem']}" action="pm:showBacklogitem?transition=slideup" update="showBacklogitem"/>
+		<p:separator style="margin-top:30px;"/>
+		<p:panelGrid id="sprintGrid" columns="3" layout="grid" style="width:100%; margin-top:10px" >
+			
+			<p:panel header="To Do" >
+				<p:dataGrid var="backlogitem" value="#{taskboardController.selectedSprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" >
+						<ui:repeat var="task" value="#{backlogitem.tasks}" >
+							<p:panel header="Task - #{task.name}" rendered="#{task.status == 'ToDo'}">
+								<p:panelGrid columns="3">
+									<p:commandButton icon="ui-icon-delete" action="#{taskboardController.doDeleteTask(task)}"/>
+									<p:commandButton icon="ui-icon-search" action="#{taskboardController.doSelectedTaskMobile(task)}" update="showTask" />
+        							<p:commandButton icon="ui-icon-carat-r" actionListener="#{taskboardController.doInProgress(task)}"/>
+        						</p:panelGrid>
+							</p:panel>
+						</ui:repeat>
+				</p:dataGrid>
+			</p:panel>
+			
+			
+			<p:panel header="In Progress" >
+				<p:dataGrid var="backlogitem" value="#{taskboardController.selectedSprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" >
+						<ui:repeat var="task" value="#{backlogitem.tasks}" >
+							<p:panel header="Task - #{task.name}" rendered="#{task.status == 'InProgress'}">
+								<p:panelGrid columns="3">
+									<p:commandButton icon="ui-icon-carat-l" action="#{taskboardController.doToDo(task)}"/>
+									<p:commandButton icon="ui-icon-search" action="#{taskboardController.doSelectedTaskMobile(task)}" update="showTask" />
+        							<p:commandButton icon="ui-icon-carat-r" action="#{taskboardController.doDone(task)}"/>
+        						</p:panelGrid>
+							</p:panel>
+						</ui:repeat>
+				</p:dataGrid>
+			</p:panel>
+			
+			<p:panel header="Done" >
+				<p:dataGrid var="backlogitem" value="#{taskboardController.selectedSprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" >
+						<ui:repeat var="task" value="#{backlogitem.tasks}" >
+							<p:panel header="Task - #{task.name}" rendered="#{task.status == 'Done'}">
+								<p:panelGrid columns="3">
+									<p:commandButton icon="ui-icon-carat-l" action="#{taskboardController.doInProgress(task)}"/>
+									<p:commandButton icon="ui-icon-search" action="#{taskboardController.doSelectedTaskMobile(task)}" update="showTask" />
+									<p:commandButton icon="ui-icon-delete" action="#{taskboardController.doDeleteTask(task)}"/>
+        						</p:panelGrid>
+							</p:panel>
+						</ui:repeat>
+				</p:dataGrid>
+			</p:panel>
+			
+		</p:panelGrid>
+	</h:form>
+</pm:page>
+
+<pm:page id="showBacklogitem" lazy="true">
+	<pm:header title="#{msg['backlog.backlogitem']}" swatch="b">
+    	<p:button outcome="pm:showTaskboard?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+	</pm:header>
+	<pm:content>
+		<h:form>
+			<h2>#{msg['taskboard.addTask']}</h2>
+			<ui:repeat var="backlogitem" value="#{taskboardController.selectedSprint.backlogitems}" >
+				<p:commandButton value="Backlogitem - #{backlogitem.thema}" icon="ui-icon-carat-r" action="#{taskboardController.doAddTaskMobile(backlogitem)}"  iconPos="right" update="addTask"/>
+			</ui:repeat>
+		</h:form>
+	</pm:content>
+</pm:page>
+
+<pm:page id="addTask" lazy="true">
+	<pm:header title="#{msg['taskboard.addTask']}" swatch="b">
+    	<p:button outcome="pm:showBacklogitem?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+	</pm:header>
+	<pm:content>
+		<h:form>
+			<p:panelGrid id="addTaskGrid" columns="3" layout="grid" >
+		
+				<h:outputText value="#{msg['taskboard.name']}:*" />
+				<p:inputText id="name" value="#{selectedTask.name}" required="true"/>
+				<p:message for="name" display="icon"/>
+			
+				<h:outputText value="#{msg['taskboard.description']}:" />
+				<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedTask.description}"/>
+				<p:message for="description" display="icon"/>	
+
+			</p:panelGrid>
+			<p:commandButton id="saveTask" value="#{msg['taskboard.save']}" action="#{taskboardController.doAddSaveTaskMobile()}" icon="ui-icon-check" update="showBacklogitem"/>
+
+		</h:form>
+	</pm:content>
+</pm:page>
+
+<pm:page id="showTask" lazy="true">
+	<pm:header title="#{msg['taskboard.showTask']}" swatch="b">
+    	<p:button outcome="pm:showTaskboard?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+	</pm:header>
+	<pm:content>
+		<h:form>
+			<p:panelGrid id="showTaskGrid" columns="2" layout="grid" >
+
+				<h:outputText value="#{msg['taskboard.name']}:" />
+				<h:outputText id="name" value="#{selectedTask.name}" />
+			
+				<h:outputText value="#{msg['taskboard.description']}:" />
+				<h:outputText id="description" value="#{selectedTask.description}"/>
+			
+			</p:panelGrid>
+		</h:form>
+	</pm:content>
+</pm:page>
+
+
+</h:body>
+</html>

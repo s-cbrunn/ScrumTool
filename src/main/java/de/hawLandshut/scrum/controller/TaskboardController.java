@@ -2,6 +2,7 @@ package de.hawLandshut.scrum.controller;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.event.Event;
 import javax.faces.view.ViewScoped;
@@ -13,12 +14,14 @@ import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.TabChangeEvent;
 
 import de.hawLandshut.scrum.data.BacklogitemProducer;
+import de.hawLandshut.scrum.data.SprintProducer;
 import de.hawLandshut.scrum.data.TaskProducer;
 import de.hawLandshut.scrum.model.Backlogitem;
 import de.hawLandshut.scrum.model.Sprint;
 import de.hawLandshut.scrum.model.State;
 import de.hawLandshut.scrum.model.Status;
 import de.hawLandshut.scrum.model.Task;
+import de.hawLandshut.scrum.services.SprintService;
 import de.hawLandshut.scrum.util.Events.AddedTask;
 import de.hawLandshut.scrum.util.Events.DeletedTask;
 import de.hawLandshut.scrum.util.Events.UpdatedBacklogitem;
@@ -58,6 +61,12 @@ public class TaskboardController extends Controller implements Serializable{
 	@Inject
 	private TaskProducer taskProducer;
 	
+	@Inject 
+	private SprintProducer sprintProducer;
+	
+	@Inject
+	private SprintService sprintService;
+	
 	private Task selectedTask;
 	
 	public void onTabChange(TabChangeEvent event) {
@@ -70,10 +79,22 @@ public class TaskboardController extends Controller implements Serializable{
 		openDialog(Pages.DIALOG_ADD_TASK);
 	}
 	
+	public String doAddTaskMobile(Backlogitem backlogitem){
+		taskProducer.prepareAddTask();
+		taskProducer.getSelectedTask().setBacklogitem(backlogitem);
+		return Pages.ADD_TASK_MOBILE;
+	}
+	
 	public void doAddSaveTask(){
 		taskAddEvent.fire(taskProducer.getSelectedTask());
 		closeDialog(null);
 		pushToAllClients(notify, "Add Task", taskProducer.getSelectedTask().getName() + " was created");
+	}
+	
+	public String doAddSaveTaskMobile(){
+		taskAddEvent.fire(taskProducer.getSelectedTask());
+		pushToAllClients(notify, "Add Task", taskProducer.getSelectedTask().getName() + " was created");
+		return Pages.SHOW_BACKLOGITEM_MOBIlE;
 	}
 	
 	public void doShowBacklogitem(Backlogitem backlogitem){
@@ -93,6 +114,28 @@ public class TaskboardController extends Controller implements Serializable{
 	
 	public void doSelectedTask(Task task){
 		this.selectedTask = task;
+	}
+	
+	public String doSelectedTaskMobile(Task task){
+		taskProducer.setSelectedTask(task);
+		return Pages.SHOW_TASK;
+	}
+	
+	public String doSelectedSprint(Sprint sprint){
+		sprintProducer.setSelectedSprint(sprint);
+		return Pages.SHOW_TASKBOARD;
+	}
+	
+	public Sprint getSelectedSprint(){
+		
+		List<Sprint> sprints = sprintService.getAllSprints();
+		for(Sprint s:sprints){
+			if(s.getId().equals(sprintProducer.getSelectedSprint().getId())){
+				return s;
+			}
+		}
+		
+		return sprintProducer.getSelectedSprint();
 	}
 	
 	private Task getSelectedTask(){
@@ -123,6 +166,30 @@ public class TaskboardController extends Controller implements Serializable{
 
 	}
 	
+	public void doInProgress(Task task){
+		task.setStatus(State.InProgress);
+		taskUpdateEvent.fire(task);
+		pushToAllClients(notify,"Done - Task", task.getName() + " was moved");
+	}
+	
+	public void doDone(Task task){
+		task.setStatus(State.Done);
+		taskUpdateEvent.fire(task);
+		pushToAllClients(notify,"Done - Task", task.getName() + " was moved");
+	}
+	
+	public void doToDo(Task task){
+		task.setStatus(State.ToDo);
+		taskUpdateEvent.fire(task);
+		pushToAllClients(notify,"Done - Task", task.getName() + " was moved");
+	}
+	
+	public String doCloseSprint(){
+		doCloseSprint(getSelectedSprint());
+		return Pages.MAIN;
+	}
+	
+	
 	public void doCloseSprint(Sprint sprint){
 		sprint.setStatus(Status.Done);
 
@@ -143,6 +210,7 @@ public class TaskboardController extends Controller implements Serializable{
 			}
 		}	
 		sprintUpdateEvent.fire(sprint);
+		pushToAllClients(notify,"Sprint", sprint.getName() + " was closed");
 	}
 
 

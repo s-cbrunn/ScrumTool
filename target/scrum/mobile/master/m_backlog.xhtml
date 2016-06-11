@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+	<script src="../resources/js/push.js"></script>
+</h:head>
+
+<p:growl widgetVar="growl" showDetail="true" life="3000"/>		
+
+<p:socket onMessage="handleMessage" channel="/backlogNotify" >
+	<p:ajax update="main:backlogs addBacklogitem showBacklog:showBacklogitem editBacklogitem" />
+</p:socket>	
+
+<h:body>
+
+
+
+	<pm:page id="main">
+	 <pm:header title="Backlog" swatch="b">
+	 	<p:commandButton id="btn-basic" value="Menu" type="button" icon="ui-icon-bars" styleClass="ui-btn-inline" />
+	 </pm:header>
+	 <pm:content styleClass="jqm-content">
+		<h:form id="backlogs">	
+		<p:panelGrid columns="1">
+			<p:commandButton value="#{msg['backlog.addBacklog']}"  action="#{backlogController.doAddBacklogMobile()}"/>
+		</p:panelGrid>
+		
+		<p:separator style="margin-top:30px;"/>
+		
+		<ui:repeat var="backlog" value="#{backlogs}">
+			<p:commandButton value="Backlog - #{backlog.name}" icon="ui-icon-carat-r" iconPos="right"  action="#{backlogController.doSelectedBacklog(backlog)}" update="showBacklog:showBacklogitem"/>
+		</ui:repeat>
+		
+		
+		
+		</h:form>
+	</pm:content>
+
+
+	<p:overlayPanel for="btn-basic" widgetVar="pnl-basic" at="left"
+		showEffect="overlay">
+		<p:graphicImage value="../resources/img/logo.png" />
+		<p:menu>
+			<p:menuitem value="Overview" url="../user/m_overview.jsf" />
+			<p:menuitem value="Team" url="../master/m_team.jsf" />
+			<p:menuitem value="Backlog" url="../master/m_backlog.jsf" />
+			<p:menuitem value="Sprint" url="../user/m_sprint.jsf" />
+			<p:menuitem value="Taskboard" url="../user/m_taskboard.jsf" />
+			<p:menuitem value="Burndown" url="../user/m_burndown.jsf" />
+		</p:menu>
+	</p:overlayPanel>
+</pm:page>
+
+
+<pm:page id="showBacklog" lazy="true">
+<pm:header title="#{msg['backlog.backlogitem']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    	<p:commandButton action="#{backlogController.doDeleteBacklogMobile()}" value="Delete" icon="ui-icon-delete" styleClass="ui-btn-right ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="showBacklogitem">
+    
+    	<p:panelGrid columns="2">
+			<p:commandButton value="#{msg['backlog.addBacklogitem']}" action="#{backlogController.doAddBacklogitemMobile()}"/>
+			<p:button value="#{msg['backlog.assignTeam']}" outcome="pm:assignTeams" />
+		</p:panelGrid>
+		
+		<p:separator style="margin-top:30px;"/>
+    
+		<p:dataTable var="backlogitem" value="#{backlogController.backlogitems}" liveResize="true" emptyMessage="Keine Backlogitems vorhanden" lazy="true">
+
+    						
+    						<p:column headerText="#{msg['backlog.editBacklogitem']}">
+   	     						<p:commandButton id="editBacklogitem"  action="#{backlogController.doEditBacklogitemMobile(backlogitem)}"  icon="ui-icon-edit" styleClass="ui-btn-inline" />
+    						</p:column> 
+    						
+    						<p:column headerText="#{msg['backlog.thema']}">
+        						<h:outputText value="#{backlogitem.thema}" />
+    						</p:column>
+ 
+    						<p:column headerText="#{msg['backlog.story']}">
+        						<h:outputText value="#{backlogitem.story}" />
+    						</p:column>
+ 
+    						<p:column headerText="#{msg['backlog.accept']}">
+        						<h:outputText value="#{backlogitem.accept}" />
+    						</p:column>
+ 
+   	 						<p:column headerText="#{msg['backlog.type']}">
+   	     						<h:outputText value="#{backlogitem.type}" />
+    						</p:column>
+    						
+    						<p:column headerText="#{msg['backlog.estimate']}">
+   	     						<h:outputText value="#{backlogitem.estimate}" />
+    						</p:column>
+    						
+    						<p:column headerText="#{msg['backlog.delete']}">
+   	     						<p:commandButton id="deleteBacklogitem" action="#{backlogController.doDeleteBacklogitem(backlogitem)}"  icon="ui-icon-delete" styleClass="ui-btn-inline" />
+    						</p:column>      						
+    						
+						</p:dataTable>
+	</h:form>
+    </pm:content>
+   
+</pm:page>
+
+<pm:page id="addBacklog" lazy="true">
+<pm:header title="#{msg['backlog.addBacklog']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="addBacklogForm">
+		<p:panelGrid id="addBacklogGrid" columns="3" layout="grid">
+		
+			<h:outputText value="#{msg['backlog.name']}:*" />
+			<p:inputText id="name" value="#{selectedBacklog.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedBacklog.description}"/>
+			<p:message for="description" display="icon"/>	
+	
+		</p:panelGrid>
+		<p:commandButton id="saveBacklog" value="#{msg['backlog.save']}" action="#{backlogController.doAddBacklogSaveMobile}" icon="ui-icon-check"/>
+	</h:form>
+    </pm:content>
+   
+</pm:page>
+
+
+
+<pm:page id="addBacklogitem" lazy="true">
+<pm:header title="#{msg['backlog.addBacklog']}" swatch="b">
+    	<p:button outcome="pm:showBacklog?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="addBacklogitemForm">
+		<p:panelGrid id="addBacklogitemGrid" columns="3" layout="grid" style="width:100%" >
+		
+			<h:outputText value="#{msg['backlog.name']}:*" />
+			<p:inputText id="thema" value="#{selectedBacklogitem.thema}" required="true"/>
+			<p:message for="thema" display="icon"/>
+			
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<p:inputTextarea id="story" rows="6" cols="23" value="#{selectedBacklogitem.story}" required="true"/>
+			<p:message for="story" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.accept']}:" />
+			<p:inputTextarea id="accept" rows="6" cols="23" value="#{selectedBacklogitem.accept}" />
+			<p:message for="accept" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.type']}:" />
+			<p:selectOneMenu id="types" value="#{selectedBacklogitem.type}" style="width:160px" required="true">
+                <f:selectItems value="#{selectedBacklogitem.types}" />
+            </p:selectOneMenu>
+            <p:message for="types" display="icon"/>
+            
+            <h:outputText value="#{msg['backlog.estimate']}:" />
+			<p:inputText id="estimate" value="#{selectedBacklogitem.estimate}" >
+				<f:validateDoubleRange minimum="1" maximum="99999" />
+			</p:inputText>
+			<p:message for="estimate" display="icon"/>
+		</p:panelGrid>
+		 <p:commandButton id="saveBacklog" value="#{msg['backlog.save']}" icon="ui-icon-check" action="#{backlogController.doAddBacklogitemSaveMobile()}" update="showBacklog"/>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+<pm:page id="editBacklogitem" lazy="true">
+<pm:header title="#{msg['backlog.addBacklog']}" swatch="b">
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="editBacklogitemForm" >
+		<p:panelGrid columns="3" layout="grid" style="width:100%" >
+		
+			<h:outputText value="#{msg['backlog.name']}:*" />
+			<p:inputText id="thema" value="#{selectedBacklogitem.thema}" required="true"/>
+			<p:message for="thema" display="icon"/>
+			
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<p:inputTextarea id="story" rows="6" cols="23" value="#{selectedBacklogitem.story}" required="true"/>
+			<p:message for="story" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.accept']}:" />
+			<p:inputTextarea id="accept" rows="6" cols="23" value="#{selectedBacklogitem.accept}" />
+			<p:message for="accept" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.type']}:" />
+			<p:selectOneMenu id="types" value="#{selectedBacklogitem.type}" style="width:160px" required="true">
+                <f:selectItems value="#{selectedBacklogitem.types}" />
+            </p:selectOneMenu>
+            <p:message for="types" display="icon"/>
+            
+            <h:outputText value="#{msg['backlog.estimate']}:" />
+			<p:inputText id="estimate" value="#{selectedBacklogitem.estimate}" >
+				<f:validateDoubleRange minimum="1" maximum="99999" />
+			</p:inputText>
+			<p:message for="estimate" display="icon"/>
+		</p:panelGrid>
+		 <p:commandButton id="saveBacklog" value="#{msg['backlog.save']}" icon="ui-icon-check" action="#{backlogController.doUpdateBacklogitemSaveMobile()}" update="showBacklog"/>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+<pm:page id="assignTeams" lazy="true">
+<pm:header title="#{msg['backlog.addBacklog']}" swatch="b">
+    	<p:button outcome="pm:showBacklog?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="assignTeam">
+    	<p:commandButton value="#{msg['team.noTeam']}" icon="ui-icon-tag" iconPos="left" action="#{backlogController.doNoAssignTeamMobile}" update="showBacklog"/>
+		<ui:repeat var="team" value="#{teams}">
+			<p:commandButton value="Team - #{team.name}" icon="ui-icon-tag" iconPos="left" action="#{backlogController.doAssignTeamMobile(team)}" update="showBacklog"/>
+		</ui:repeat>
+	</h:form>
+    </pm:content>
+  
+</pm:page>
+
+
+</h:body>
+</html>

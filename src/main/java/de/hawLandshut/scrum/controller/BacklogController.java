@@ -1,6 +1,7 @@
 package de.hawLandshut.scrum.controller;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.enterprise.event.Event;
 import javax.faces.view.ViewScoped;
@@ -16,6 +17,8 @@ import de.hawLandshut.scrum.model.Backlog;
 import de.hawLandshut.scrum.model.Backlogitem;
 import de.hawLandshut.scrum.model.Sprint;
 import de.hawLandshut.scrum.model.Task;
+import de.hawLandshut.scrum.model.Team;
+import de.hawLandshut.scrum.services.BacklogService;
 import de.hawLandshut.scrum.util.Events.AddedBacklog;
 import de.hawLandshut.scrum.util.Events.AddedBacklogitem;
 import de.hawLandshut.scrum.util.Events.DeletedBacklog;
@@ -68,6 +71,8 @@ public class BacklogController extends Controller implements Serializable {
 	private BacklogProducer backlogProducer;
 	@Inject 
 	private BacklogitemProducer backlogitemProducer;
+	@Inject
+	private BacklogService backlogService;
 	
 	
 
@@ -76,9 +81,28 @@ public class BacklogController extends Controller implements Serializable {
 		openDialog(Pages.DIALOG_ADD_BACKLOG);
 	}
 	
+	public String doAddBacklogMobile() {
+		backlogProducer.prepareAddBacklog();
+		return Pages.ADD_BACKLOG_MOBILE;
+	}
+	
 	public void doAssignTeam(Backlog backlog){
 		backlogProducer.setSelectedBacklog(backlog);
 		openDialog(Pages.DIALOG_ASSIGN_TEAM);
+	}
+	
+	public String doAssignTeamMobile(Team team){
+		backlogProducer.getSelectedBacklog().setTeam(team);
+		backlogUpdateEvent.fire(backlogProducer.getSelectedBacklog());		
+		pushToAllClients(notify, "Assign Team", backlogProducer.getSelectedBacklog().getTeam().getName() + " was assigned");
+		return Pages.SHOW_BACKLOG;
+	}
+	
+	public String doNoAssignTeamMobile(){
+		backlogProducer.getSelectedBacklog().setTeam(null);
+		backlogUpdateEvent.fire(backlogProducer.getSelectedBacklog());
+		pushToAllClients(notify, "Assign Team", "NO TEAM ASSIGNED" + " was assigned");
+		return Pages.SHOW_BACKLOG;
 	}
 	
 	public void doAssignTeamSave(){
@@ -92,11 +116,24 @@ public class BacklogController extends Controller implements Serializable {
 		closeDialog(null);
 		pushToAllClients(notify, "Add Backlog", backlogProducer.getSelectedBacklog().getName() + " was created");
 	}
+	
+	public String doAddBacklogSaveMobile() {
+		backlogAddEvent.fire(backlogProducer.getSelectedBacklog());
+		pushToAllClients(notify, "Add Backlog", backlogProducer.getSelectedBacklog().getName() + " was created");
+		backlogProducer.prepareAddBacklog();		
+		return Pages.MAIN;
+	}
 
 	public void doAddBacklogitem(Backlog backlog) {
 		backlogitemProducer.prepareAddBacklogitem();
 		backlogitemProducer.getSelectedBacklogitem().setBacklog(backlog);
 		openDialog(Pages.DIALOG_ADD_BACKLOGITEM);
+	}
+	
+	public String doAddBacklogitemMobile(){
+		backlogitemProducer.prepareAddBacklogitem();
+		backlogitemProducer.getSelectedBacklogitem().setBacklog(backlogProducer.getSelectedBacklog());
+		return Pages.ADD_BACKLOGITEM_MOBILE;
 	}
 
 	public void doAddBacklogitemSave() {
@@ -105,10 +142,23 @@ public class BacklogController extends Controller implements Serializable {
 		pushToAllClients(notify, "Add Backlogitem", backlogitemProducer.getSelectedBacklogitem().getThema() + " was created");
 	}
 	
+	public String doAddBacklogitemSaveMobile(){
+		backlogitemAddEvent.fire(backlogitemProducer.getSelectedBacklogitem());
+		pushToAllClients(notify, "Add Backlogitem", backlogitemProducer.getSelectedBacklogitem().getThema() + " was created");
+		backlogitemProducer.prepareAddBacklogitem();
+		return Pages.SHOW_BACKLOG;
+	}
+	
 	public void doUpdateBacklogitemSave(){
 		backlogitemUpdateEvent.fire(backlogitemProducer.getSelectedBacklogitem());
 		closeDialog(null);
 		pushToAllClients(notify, "Update Backlogitem", backlogitemProducer.getSelectedBacklogitem().getThema() + " was updated");
+	}
+	
+	public String doUpdateBacklogitemSaveMobile(){
+		backlogitemUpdateEvent.fire(backlogitemProducer.getSelectedBacklogitem());
+		pushToAllClients(notify, "Update Backlogitem", backlogitemProducer.getSelectedBacklogitem().getThema() + " was updated");
+		return Pages.SHOW_BACKLOG;
 	}
 
 	public void doDeleteBacklog(Backlog backlog) {
@@ -136,6 +186,11 @@ public class BacklogController extends Controller implements Serializable {
 		pushToAllClients(notify, "Delete Backlog", name + " was deleted");
 	}
 	
+	public String doDeleteBacklogMobile(){
+		doDeleteBacklog(backlogProducer.getSelectedBacklog());
+		return Pages.MAIN;
+	}
+	
 	public void doShowBacklog(Backlog backlog){
 		backlogProducer.setSelectedBacklog(backlog);
 		openDialog(Pages.DIALOG_SHOW_BACKLOG);
@@ -146,10 +201,20 @@ public class BacklogController extends Controller implements Serializable {
 		backlogitemDeletedEvent.fire(backlogitem);
 		pushToAllClients(notify, "Delete Backlogitem", name + " was deleted");
 	}
-	
+		
 	public void doEditBacklogitem(Backlogitem backlogitem){
 		backlogitemProducer.setSelectedBacklogitem(backlogitem);
 		openDialog(Pages.DIALOG_EDIT_BACKLOGITEM);
+	}
+	
+	public String doEditBacklogitemMobile(Backlogitem backlogitem){
+		backlogitemProducer.setSelectedBacklogitem(backlogitem);
+		return Pages.EDIT_BACKLOGITEM_MOBILE;
+	}
+	
+	public String doSelectedBacklog(Backlog backlog){
+		backlogProducer.setSelectedBacklog(backlog);
+		return Pages.SHOW_BACKLOG;
 	}
 	
 	public void onTabChange(TabChangeEvent event) {
@@ -159,6 +224,16 @@ public class BacklogController extends Controller implements Serializable {
         else
         	setActiveIndex(index);
     }
+	
+	public List<Backlogitem> getBacklogitems(){
+		List<Backlog> backlog = backlogService.getAllBacklogs();
+		for(Backlog b : backlog){
+			if(b.getId().equals(backlogProducer.getSelectedBacklog().getId())){
+				return b.getItems();
+			}
+		}
+		return null;
+	}
 
 	
 }

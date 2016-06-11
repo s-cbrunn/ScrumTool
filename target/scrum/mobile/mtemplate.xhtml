@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:pm="http://primefaces.org/mobile">
+	
+	<f:view renderKitId="PRIMEFACES_MOBILE" />
+   
+<h:head>
+	<meta http-equiv="Refresh" content="1810" />
+	<link rel="stylesheet" href="../resources/css/style.css" />
+    <script src="../resources/js/push.js"></script>
+</h:head>
+<body>
+	
+	<header> 
+		<img src="../resources/img/logo.png" />
+			<nav>
+				<ui:insert name="navigation">
+					<a href="../mobile/user/overview.jsf">Overview</a>
+					<a href="../mobile/master/team.jsf">Team</a>
+					<a href="../mobile/master/backlog.jsf">Backlog</a>
+					<a href="../mobile/user/sprint.jsf">Sprint</a>
+					<a href="../mobile/user/taskboard.jsf">Task Board</a>
+					<a href="../mobile/user/burndown.jsf">Burndown</a>
+					<!-- <a href="../user/planningpoker.jsf">Planning Poker</a>  -->
+				</ui:insert> 
+			</nav> 	
+	</header>
+	
+	<h:form id="logout"> 
+		<p:commandLink value="Logout" action="#{controller.logOut()}" styleClass="logout" />
+	</h:form>
+
+	<section> <ui:insert name="content">Insert your Content</ui:insert> </section>
+
+<!-- Muss noch gefixt werden!!!!!!!!!
+	<footer>Copyright &copy;</footer>
+-->
+</body>
+</html>

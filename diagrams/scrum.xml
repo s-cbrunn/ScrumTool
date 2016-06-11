@@ -2,9 +2,9 @@
 	<entity>
 		<entity-name>de.hawLandshut.scrum.model.Member</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>246</entity-height>
-		<entity-X-Coordinate>331</entity-X-Coordinate>
-		<entity-Y-Coordinate>34</entity-Y-Coordinate>
+		<entity-height>266</entity-height>
+		<entity-X-Coordinate>271</entity-X-Coordinate>
+		<entity-Y-Coordinate>0</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -14,8 +14,8 @@
 		<entity-name>de.hawLandshut.scrum.model.Sprint</entity-name>
 		<entity-width>120</entity-width>
 		<entity-height>246</entity-height>
-		<entity-X-Coordinate>634</entity-X-Coordinate>
-		<entity-Y-Coordinate>474</entity-Y-Coordinate>
+		<entity-X-Coordinate>412</entity-X-Coordinate>
+		<entity-Y-Coordinate>450</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -25,8 +25,19 @@
 		<entity-name>de.hawLandshut.scrum.model.Backlog</entity-name>
 		<entity-width>120</entity-width>
 		<entity-height>226</entity-height>
-		<entity-X-Coordinate>196</entity-X-Coordinate>
-		<entity-Y-Coordinate>410</entity-Y-Coordinate>
+		<entity-X-Coordinate>90</entity-X-Coordinate>
+		<entity-Y-Coordinate>460</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>de.hawLandshut.scrum.model.Task</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>206</entity-height>
+		<entity-X-Coordinate>644</entity-X-Coordinate>
+		<entity-Y-Coordinate>156</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>
@@ -36,7 +47,7 @@
 		<entity-name>de.hawLandshut.scrum.model.Team</entity-name>
 		<entity-width>120</entity-width>
 		<entity-height>166</entity-height>
-		<entity-X-Coordinate>50</entity-X-Coordinate>
+		<entity-X-Coordinate>90</entity-X-Coordinate>
 		<entity-Y-Coordinate>50</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
@@ -46,20 +57,9 @@
 	<entity>
 		<entity-name>de.hawLandshut.scrum.model.Backlogitem</entity-name>
 		<entity-width>120</entity-width>
-		<entity-height>286</entity-height>
-		<entity-X-Coordinate>634</entity-X-Coordinate>
-		<entity-Y-Coordinate>40</entity-Y-Coordinate>
-		<primary-collapsed>false</primary-collapsed>
-		<relation-collapsed>false</relation-collapsed>
-		<basic-collapsed>false</basic-collapsed>
-	</entity>
-
-	<entity>
-		<entity-name>de.hawLandshut.scrum.model.Task</entity-name>
-		<entity-width>120</entity-width>
-		<entity-height>186</entity-height>
-		<entity-X-Coordinate>980</entity-X-Coordinate>
-		<entity-Y-Coordinate>127</entity-Y-Coordinate>
+		<entity-height>266</entity-height>
+		<entity-X-Coordinate>412</entity-X-Coordinate>
+		<entity-Y-Coordinate>126</entity-Y-Coordinate>
 		<primary-collapsed>false</primary-collapsed>
 		<relation-collapsed>false</relation-collapsed>
 		<basic-collapsed>false</basic-collapsed>

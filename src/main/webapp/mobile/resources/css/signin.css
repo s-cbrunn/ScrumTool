@@ -1,0 +1,141 @@
+@CHARSET "UTF-8";
+html, body
+{
+    height: 100%;
+}
+
+body
+{
+    font: 12px 'Lucida Sans Unicode', 'Trebuchet MS', Arial, Helvetica;
+	margin: 0;
+	background-color: #ebeef2;
+}
+
+
+#login
+{
+    background-color: #fff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
+    background-image: -webkit-linear-gradient(top, #fff, #eee);
+    background-image: -moz-linear-gradient(top, #fff, #eee);
+    background-image: -ms-linear-gradient(top, #fff, #eee);
+    background-image: -o-linear-gradient(top, #fff, #eee);
+    background-image: linear-gradient(top, #fff, #eee);  
+    height: 240px;
+    width: 400px;
+    margin: -150px 0 0 -230px;
+    padding: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 0;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;  
+    -webkit-box-shadow:
+          0 0 2px rgba(0, 0, 0, 0.2),
+          0 1px 1px rgba(0, 0, 0, .2),
+          0 3px 0 #fff,
+          0 4px 0 rgba(0, 0, 0, .2),
+          0 6px 0 #fff,  
+          0 7px 0 rgba(0, 0, 0, .2);
+    -moz-box-shadow:
+          0 0 2px rgba(0, 0, 0, 0.2),  
+          1px 1px   0 rgba(0,   0,   0,   .1),
+          3px 3px   0 rgba(255, 255, 255, 1),
+          4px 4px   0 rgba(0,   0,   0,   .1),
+          6px 6px   0 rgba(255, 255, 255, 1),  
+          7px 7px   0 rgba(0,   0,   0,   .1);
+    box-shadow:
+          0 0 2px rgba(0, 0, 0, 0.2),  
+          0 1px 1px rgba(0, 0, 0, .2),
+          0 3px 0 #fff,
+          0 4px 0 rgba(0, 0, 0, .2),
+          0 6px 0 #fff,  
+          0 7px 0 rgba(0, 0, 0, .2);
+}
+
+#login:before
+{
+    content: '';
+    position: absolute;
+    z-index: -1;
+    border: 1px dashed #ccc;
+    top: 5px;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    -moz-box-shadow: 0 0 0 1px #fff;
+    -webkit-box-shadow: 0 0 0 1px #fff;
+    box-shadow: 0 0 0 1px #fff;
+}
+
+
+h1
+{
+    text-align: center;
+    color: gray;
+    margin: 0 0 30px 0;
+    letter-spacing: 4px;
+    font: normal 26px/1 Verdana, Helvetica;
+    position: relative;
+}
+
+#error{
+	text-align: center;
+	color: red;
+}
+
+fieldset
+{
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+#inputs .input
+{
+    padding: 10px 10px 10px 30px;
+    margin: 0 0 10px 0;
+    width: 353px; 
+
+
+}
+
+
+#actions
+{
+    margin: 10px 0 0 0;
+}
+
+#registration{
+	margin: 5px 0 0 0;
+}
+
+.signup{
+
+	margin-left: 2px;
+	margin-right: 30px;
+	color: #666666;
+	font-weight: 700;
+	font-size: 12px;
+	visited: text-decoration: none;
+	text-decoration: none;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	-ms-transition: all 0.3s;
+	-o-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+.signup:hover{
+	color: #C9CACB;
+}
+
+
+
+
+
+
+
+

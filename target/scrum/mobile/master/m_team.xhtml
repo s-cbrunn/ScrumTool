@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+	<script src="../resources/js/push.js"></script>
+</h:head>
+<h:body>
+
+<p:growl widgetVar="growl" showDetail="true" life="3000"/>		
+
+<p:socket onMessage="handleMessage" channel="/teamNotify" >
+	<p:ajax update="main:team teams" />
+</p:socket>	
+
+
+<pm:page id="main">
+	 <pm:header title="Teams" swatch="b">
+	 	<p:commandButton id="menu" value="Menu" type="button" icon="ui-icon-bars" styleClass="ui-btn-inline" />
+	 </pm:header>
+	 <pm:content styleClass="jqm-content">
+	
+	<h:form id="team">	
+		<p:panelGrid columns="2">
+			<p:commandButton value="#{msg['team.addMember']}" action="#{teamController.doAddMemberMobile()}" />
+			<p:commandButton value="#{msg['team.addTeam']}" action="#{teamController.doAddTeamMobile()}" />
+		</p:panelGrid>
+		<p:separator style="margin-top:30px;"/>
+		<p:dataGrid id="availableTeamMember" var="member" value="#{members}" columns="3" paginator="true" rows="6">
+			<f:facet name="header">
+            	#{msg['team.availableMembers']}
+        	</f:facet>
+
+			<p:panel header="#{member.lastname}" style="text-align:center">
+				<h:panelGrid columns="1" style="width:100%">
+					<h:outputText value="#{member.firstname}" />
+					<img src="../resources/img/user.png"/>
+					<p:panelGrid columns="3">
+						<p:commandButton action="#{teamController.doDeleteMember(member)}" icon="ui-icon-delete" styleClass="ui-btn-inline" update="main:team"/>
+						<p:commandButton action="#{teamController.doAssignMember(member)}" icon="ui-icon-action" styleClass="ui-btn-inline" />
+						<p:commandButton action="#{teamController.doSelectMemberMobile(member)}" icon="ui-icon-search" styleClass="ui-btn-inline" update="showMember" />
+					</p:panelGrid>
+				</h:panelGrid>
+			</p:panel>
+		</p:dataGrid>
+		
+		<p:separator style="margin-top:30px;"/>
+		
+		<ui:repeat var="team" value="#{teams}">
+			<p:commandButton value="Team - #{team.name}" icon="ui-icon-carat-r" iconPos="right" action="#{teamController.doSelectTeam(team)}" update="teams:memberList"/>
+		</ui:repeat>
+		
+</h:form>
+	
+	</pm:content>
+
+	<p:overlayPanel for="menu" widgetVar="pnl-basic" at="left" showEffect="overlay">
+		<p:graphicImage value="../resources/img/logo.png" />
+		<p:menu>
+			<p:menuitem value="Overview" url="../user/m_overview.jsf" />
+			<p:menuitem value="Team" url="../master/m_team.jsf" />
+			<p:menuitem value="Backlog" url="../master/m_backlog.jsf" />
+			<p:menuitem value="Sprint" url="../user/m_sprint.jsf" />
+			<p:menuitem value="Taskboard" url="../user/m_taskboard.jsf" />
+			<p:menuitem value="Burndown" url="../user/m_burndown.jsf" />
+		</p:menu>
+	</p:overlayPanel>
+		
+
+	
+</pm:page>
+
+<pm:page id="showMember" lazy="true">
+<pm:header title="#{msg['team.member']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="showMemberForm">
+		<p:panelGrid id="showMemberGrid" columns="2" layout="grid">
+			<h:outputText value="#{msg['team.firstname']}:" />
+			<h:outputText value="#{selectedMember.firstname}" /> 
+            <h:outputText value="#{msg['team.lastname']}:" />
+			<h:outputText value="#{selectedMember.lastname}" />  
+			<h:outputText value="#{msg['team.email']}:" />
+			<h:outputText value="#{selectedMember.email}" /> 
+            <h:outputText value="#{msg['team.phone']}:" />
+			<h:outputText value="#{selectedMember.phone}" />  
+            <h:outputText value="#{msg['team.department']}:" />
+			<h:outputText value="#{selectedMember.department}" />
+			<h:outputText value="#{msg['team.role']}:" />
+			<h:outputText value="#{selectedMember.role}" /> 	
+		</p:panelGrid>
+		</h:form>
+    </pm:content>
+   
+</pm:page>
+
+
+
+<pm:page id="teams" lazy="true">
+	<pm:header title="Team - #{teamController.team.name}" swatch="b">
+    	<p:button outcome="pm:main?transition=flip" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    	<p:commandButton action="#{teamController.doDeleteTeamMobile}" value="Delete" icon="ui-icon-delete" styleClass="ui-btn-right ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+ 
+	<h:form id="memberList"> 
+
+        <p:dataGrid id="members" var="member" value="#{teamController.teamMembers}" columns="3" paginator="true" rows="6" lazy="true">
+			<f:facet name="header">
+            	#{msg['team.availableMembers']}
+        	</f:facet>
+
+			<p:panel header="#{member.lastname}" style="text-align:center">
+				<h:panelGrid columns="1" style="width:100%">
+					<h:outputText value="#{member.firstname}" />
+					<img src="../resources/img/user.png"/>
+					<p:panelGrid columns="1">	
+						<p:commandButton action="#{teamController.doUnassingTeam(member)}" icon="ui-icon-back" styleClass="ui-btn-inline" />
+					</p:panelGrid>
+				</h:panelGrid>
+			</p:panel>
+		</p:dataGrid>
+	</h:form>
+
+    </pm:content>
+</pm:page>
+
+<pm:page id="addMember" lazy="true">
+<pm:header title="#{msg['team.addMember']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="addMemberForm">
+		<p:panelGrid id="addMemberGrid" columns="3" layout="grid">
+		
+			<h:outputText value="#{msg['team.email']}:*" />
+			<p:inputText id="email" value="#{selectedMember.email}" required="true" />
+			<p:message for="email" display="icon"/>
+			
+			<h:outputText value="#{msg['team.password']}:*" />
+			<p:password id="password1" value="#{selectedMember.password}" match="password2" required="true"/>
+			<p:message for="password1" display="icon"/>
+			
+			<h:outputText value="#{msg['team.passwordRepeat']}:*" />
+			<p:password id="password2" value="#{selectedMember.password}" required="true"/>
+			<p:message for="password1" display="icon"/>
+			
+			<h:outputText value="#{msg['team.role']}:*" />
+			<p:selectOneMenu id="roles" value="#{selectedMember.role}" style="width:160px" required="true">
+                <f:selectItem itemLabel="#{msg['team.selectRole']}" itemValue="" noSelectionOption="true"  />
+                <f:selectItems value="#{selectedMember.roles}" />
+            </p:selectOneMenu>
+            <p:message for="roles" display="icon"/>
+            
+			<h:outputText value="#{msg['team.firstname']}:" />
+			<p:inputText id="firstname" value="#{selectedMember.firstname}" required="true"/>
+			<p:message for="firstname" display="icon"/>
+			
+			<h:outputText value="#{msg['team.lastname']}:" />
+			<p:inputText id="lastname" value="#{selectedMember.lastname}" required="true"/>
+			<p:message for="lastname" display="icon"/>
+			
+			<h:outputText value="#{msg['team.phone']}:" />
+			<p:inputText id="phone" value="#{selectedMember.phone}" />
+			<p:message for="phone" display="icon"/>
+			
+			<h:outputText id="department" value="#{msg['team.department']}:" />
+			<p:inputText value="#{selectedMember.department}" />
+			<p:message for="department" display="icon"/>		
+		</p:panelGrid>
+		<p:commandButton value="#{msg['team.save']}" action="#{teamController.doAddMemberSaveMobile()}" icon="ui-icon-check" update="addMemberForm"/>
+		</h:form>
+    </pm:content>
+   
+</pm:page>
+
+<pm:page id="addTeam" lazy="true">
+<pm:header title="#{msg['team.addTeam']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="addTeamForm">
+		<p:panelGrid id="addTeamGrid" columns="3" layout="grid" >
+		
+			<h:outputText value="#{msg['team.teamname']}:*" />
+			<p:inputText id="name" value="#{selectedTeam.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['team.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedTeam.description}"/>
+			<p:message for="description" display="icon"/>	
+
+		</p:panelGrid>
+		<p:commandButton value="#{msg['team.save']}" action="#{teamController.doAddTeamSaveMobile()}" icon="ui-icon-check" update="addTeam"/>
+		</h:form>
+    </pm:content>
+   
+</pm:page>
+
+<pm:page id="assignMember" lazy="true">
+<pm:header title="#{msg['team.assign']}" swatch="b">
+    	<p:button outcome="pm:main?transition=slidedown" value="Back" icon="ui-icon-arrow-l" styleClass="ui-btn-left ui-btn-inline"/>
+    </pm:header>
+             
+    <pm:content>
+    <h:form id="assignMember">
+		<ui:repeat var="team" value="#{teams}">
+			<p:commandButton value="Team - #{team.name}" icon="ui-icon-tag" iconPos="left" action="#{teamController.doAssignTeam(team)}" update="teams:memberList"/>
+		</ui:repeat>
+	</h:form>
+    </pm:content>
+   
+</pm:page>
+
+</h:body>
+</html>

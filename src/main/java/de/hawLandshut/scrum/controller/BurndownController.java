@@ -25,12 +25,9 @@ import de.hawLandshut.scrum.model.Task;
 public class BurndownController extends Controller implements Serializable{
 
 	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
+
 	public LineChartModel getBurndownChart(Sprint sprint){
-		
+				
 		int allPoints = 0;	
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		LineChartSeries tmpSeries;
@@ -140,4 +137,5 @@ public class BurndownController extends Controller implements Serializable{
 		
 		return series;
 	}
+
 }

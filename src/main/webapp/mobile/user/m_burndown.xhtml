@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+	<script src="../resources/js/push.js"></script>
+</h:head>
+<h:body>
+
+	<pm:page id="main">
+	 <pm:header title="#{msg['burndown.title']}" swatch="b">
+	 	<p:commandButton id="btn-basic" value="Menu" type="button" icon="ui-icon-bars" styleClass="ui-btn-inline" />
+	 </pm:header>
+	 <pm:content styleClass="jqm-content">
+		<h:form id="burndownForm">	
+			
+			<ui:repeat var="sprint" value="#{sprints}">
+				<h1>Sprint - #{sprint.name}</h1>
+				<p:chart type="line" model="#{burndownController.getBurndownChart(sprint)}" style="height:400px;"/>
+			</ui:repeat>	
+			
+		</h:form>
+	</pm:content>
+
+
+	<p:overlayPanel for="btn-basic" widgetVar="pnl-basic" at="left"
+		showEffect="overlay">
+		<p:graphicImage value="../resources/img/logo.png" />
+		<p:menu>
+			<p:menuitem value="Overview" url="../user/m_overview.jsf" />
+			<p:menuitem value="Team" url="../master/m_team.jsf" />
+			<p:menuitem value="Backlog" url="../master/m_backlog.jsf" />
+			<p:menuitem value="Sprint" url="../user/m_sprint.jsf" />
+			<p:menuitem value="Taskboard" url="../user/m_taskboard.jsf" />
+			<p:menuitem value="Burndown" url="../user/m_burndown.jsf" />
+		</p:menu>
+	</p:overlayPanel>
+</pm:page>
+
+</h:body>
+</html>

@@ -24,7 +24,7 @@
 					<p:ajax event="tabChange" listener="#{taskboardController.onTabChange}" update=":taskForm"/>
 					<p:tab id="taskTab" title="Sprint: #{sprint.name}">
 					<article>
-						<p:commandButton  id="closeSprint" value="#{msg['taskboard.closeSprint']}" actionListener="#{taskboardController.doCloseSprint(sprint)}" icon="ui-icon-locked" rendered="#{request.isUserInRole('Master')}" update=":taskForm" />
+						<p:commandButton  id="closeSprint" value="#{msg['taskboard.closeSprint']}" action="#{taskboardController.doCloseSprint(sprint)}" icon="ui-icon-locked" rendered="#{request.isUserInRole('Master')}" update=":taskForm" />
 					</article>
 						<p:panelGrid id="sprintGrid" columns="4" layout="grid" style="width:100%; margin-top:10px" >
 							

@@ -18,9 +18,9 @@
 <h:body>
 
 <h:form id="addMemberForm">
-		<p:panelGrid id="addMemberGrid" columns="3" layout="grid" style="width:100%">
+		<p:panelGrid id="addMemberGrid" columns="3" style="width:100%">
 		
-			<h:outputText value="#{msg['team.email']}:*" />
+			<p:outputLabel value="#{msg['team.email']}:*" />
 			<p:inputText id="email" value="#{selectedMember.email}" required="true" />
 			<p:message for="email" display="icon"/>
 			

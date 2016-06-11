@@ -14,7 +14,7 @@
 				
 		<article>
 			<h:form id="burndownForm">
-				<p:tabView id="burnTabView" scrollable="true" var="sprint" value="#{sprints}" >
+				<p:tabView id="burnTabView" scrollable="true" var="sprint" value="#{sprints}" dynamic="true" cache="true">
 					<p:tab id="burnTab" title="Sprint: #{sprint.name}">
 						<p:chart type="line" model="#{burndownController.getBurndownChart(sprint)}" style="height:400px;"/>
 					</p:tab>

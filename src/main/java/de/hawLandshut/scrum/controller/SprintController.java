@@ -13,6 +13,8 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.TabChangeEvent;
 
+import de.hawLandshut.scrum.data.BacklogListProducer;
+import de.hawLandshut.scrum.data.BacklogProducer;
 import de.hawLandshut.scrum.data.BacklogitemProducer;
 import de.hawLandshut.scrum.data.SprintProducer;
 import de.hawLandshut.scrum.model.Backlog;
@@ -48,9 +50,14 @@ public class SprintController extends Controller implements Serializable{
 	private Event<Backlogitem> backlogitemUpdateEvent;
 	
 	@Inject
+	private BacklogProducer backlogProducer;
+	@Inject
 	private BacklogitemProducer backlogitemProducer;
 	@Inject
 	private SprintProducer sprintProducer;
+	@Inject 
+	private BacklogListProducer backlogListProducer;
+	
 	private Backlogitem selectedBacklogitem;
 	private int accordionIndex;
 	
@@ -60,10 +67,22 @@ public class SprintController extends Controller implements Serializable{
 		openDialog(Pages.DIALOG_ADD_SPRINT);
 	}
 	
+	public String doAddSprintMobile(){
+		sprintProducer.prepareAddSprint();
+        sprintProducer.getSelectedSprint().setBacklog(backlogProducer.getSelectedBacklog());
+		return Pages.ADD_SPRINT;
+	}
+	
 	public void doAddSprintSave(){
 		sprintAddEvent.fire(sprintProducer.getSelectedSprint());
 		closeDialog(null);
 		pushToAllClients(notify, "Create Sprint", sprintProducer.getSelectedSprint().getName() + " was created");
+	}
+	
+	public String doAddSprintSaveMobile(){
+		sprintAddEvent.fire(sprintProducer.getSelectedSprint());
+		pushToAllClients(notify, "Create Sprint", sprintProducer.getSelectedSprint().getName() + " was created");
+		return Pages.SHOW_SPRINT;
 	}
 	
 	public void doDeleteSprint(Sprint sprint){
@@ -105,6 +124,14 @@ public class SprintController extends Controller implements Serializable{
 		backlogitemUpdateEvent.fire(getSelectedBacklogitem());
 		pushToAllClients(notify, "Backlogitem -> Sprint", destinationSprint.getName() + " with new Item");
 	}
+	
+	public String doAssignBacklogitem(Sprint sprint){
+		backlogitemProducer.getSelectedBacklogitem().setSprint(sprint);
+		backlogitemProducer.getSelectedBacklogitem().setBacklog(null);
+		backlogitemUpdateEvent.fire(backlogitemProducer.getSelectedBacklogitem());
+		pushToAllClients(notify, "Backlogitem -> Sprint", sprint.getName() + " with new Item");
+		return Pages.SHOW_SPRINT;
+	}
 
 	public Backlogitem getSelectedBacklogitem() {
 		return selectedBacklogitem;
@@ -112,6 +139,16 @@ public class SprintController extends Controller implements Serializable{
 
 	public void doSelectBacklogitem(Backlogitem selectedBacklogitem) {
 		this.selectedBacklogitem = selectedBacklogitem;
+	}
+	
+	public String doSelectBacklogitemMobile(Backlogitem backlogitem) {
+		backlogitemProducer.setSelectedBacklogitem(backlogitem);
+		return Pages.SHOW_BACKLOGITEM_MOBIlE;
+	}
+	
+	public String doSelectBacklogitemAssign(Backlogitem backlogitem) {
+		backlogitemProducer.setSelectedBacklogitem(backlogitem);
+		return Pages.ASSIGN_BACKLOGITEM;
 	}
 	
 	public void doShowBacklogitem(Backlogitem backlogitem){
@@ -132,6 +169,22 @@ public class SprintController extends Controller implements Serializable{
 	public void setAccordionIndex(int accordionIndex) {
 		this.accordionIndex = accordionIndex;
 	}
+	
+	public String doSelectedBacklog(Backlog backlog){
+		backlogProducer.setSelectedBacklog(backlog);
+		return Pages.SHOW_SPRINT;
+	}
+	
+	public Backlog getSelectedBacklog(){
+		List<Backlog> backlogs = backlogListProducer.getBacklogs();
+		for(Backlog b:backlogs){
+			if(b.getId().equals(backlogProducer.getSelectedBacklog().getId())){
+				return b;
+			}
+		}
+		return null;
+	}
+	
 	
 
 	

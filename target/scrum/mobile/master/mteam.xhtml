@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pm="http://primefaces.org/mobile">
+<f:view renderKitId="PRIMEFACES_MOBILE" />
+<h:head>
+<script src="../resources/js/push.js"></script>
+</h:head>
+<h:body>
+	<pm:page id="main">
+		<pm:header title="Main Page"></pm:header>
+		<pm:content>
+		
+		<p:growl widgetVar="growl" showDetail="true" life="3000"/>
+		
+		<p:socket onMessage="handleMessage" channel="/teamNotify" >
+      		<p:ajax update="teamMemberForm" />
+		</p:socket>
+		
+		<h:form id="teamMemberForm">
+				<p:fieldset id="availableTeamMemberField" legend="#{msg['team.availableMembers']}"  >
+					<p:dataGrid id="availableTeamMember" var="member" value="${members}" emptyMessage="#{msg['team.emptyMessage']}" columns="6" layout="grid" rows="12" paginator="true" rowIndexVar="rowIndex">
+						<h:panelGrid onmousedown="rc_#{rowIndex}()" style="width:100%" >
+						<p:panel id="personPanel" header="#{member.lastname}" style="text-align:center;"  widgetVar="rc">
+                			<h:panelGrid columns="1" style="width:100%" >
+                				<h:outputText value="#{member.firstname}" />
+                   				<p:graphicImage value="../resources/img/user.png" />
+                   				<p:panelGrid  style="width:100%">
+                   					<p:commandLink id="showMemberCommand" icon="ui-icon-search" action="#{teamController.doShowMember(member)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"  />
+									<p:commandLink id="deleteMemberCommand" icon="ui-icon-trash" action="#{teamController.doDeleteMember(member)}" update=":teamMemberForm"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;" rendered="#{request.isUserInRole('Master')}" />
+               					</p:panelGrid> 
+                			</h:panelGrid>
+                			<p:draggable revert="true" stack=".ui-panel" rendered="#{request.isUserInRole('Master')}" />
+            			</p:panel>
+            			</h:panelGrid>
+            			<p:remoteCommand name="rc_#{rowIndex}" actionListener="#{teamController.doSelectMember(member)}"/> 
+					</p:dataGrid>
+					<p:droppable>
+					    <f:attribute name="initialTeam" value="null"/>
+         				<p:ajax listener="#{teamController.doDropMember}" />  
+    				</p:droppable>
+				</p:fieldset>
+				
+				</h:form>
+		
+		</pm:content>
+	</pm:page>
+</h:body>
+</html>

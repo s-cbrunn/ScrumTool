@@ -25,6 +25,12 @@
   <display-name>Master access</display-name>
   <web-resource-collection>
    <web-resource-name>Master</web-resource-name>
+   <url-pattern>/mobile/master/m_team.jsf</url-pattern>
+   <url-pattern>/mobile/master/m_backlog.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_burndown.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_sprint.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_taskboard.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_overview.jsf</url-pattern>
    <url-pattern>/master/backlog.jsf</url-pattern>
    <url-pattern>/master/team.jsf</url-pattern>
    <url-pattern>/master/dialog/*</url-pattern>
@@ -50,6 +56,10 @@
    <url-pattern>/user/sprint.jsf</url-pattern>
    <url-pattern>/user/taskboard.jsf</url-pattern>
    <url-pattern>/user/burndown.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_overview.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_burndown.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_sprint.jsf</url-pattern>
+   <url-pattern>/mobile/user/m_taskboard.jsf</url-pattern>
    <url-pattern>/rest/user/*</url-pattern>
   </web-resource-collection>
   <auth-constraint>
@@ -63,7 +73,10 @@
   <display-name>Stakeholder access</display-name>
   <web-resource-collection>
    <web-resource-name>Stakeholder</web-resource-name>
+   <url-pattern>/mobile/user/m_overview.jsf</url-pattern>
    <url-pattern>/user/overview.jsf</url-pattern>
+   <url-pattern>/mobile/master/m_team.jsf</url-pattern>
+   <url-pattern>/mobile/master/m_backlog.jsf</url-pattern>
    <url-pattern>/master/team.jsf</url-pattern>
    <url-pattern>/master/backlog.jsf</url-pattern>
    <url-pattern>/master/dialog/*</url-pattern>
