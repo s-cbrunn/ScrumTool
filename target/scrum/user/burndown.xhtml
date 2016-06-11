@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/template.xhtml">
+	<ui:define name="title">#{msg['burndown.title']}</ui:define>
+
+	<ui:define name="content">
+		<h1 id="webtitle">#{msg['burndown.header']}</h1>
+				
+		<article>
+			<h:form id="burndownForm">
+				<p:tabView id="burnTabView" scrollable="true" var="sprint" value="#{sprints}" >
+					<p:tab id="burnTab" title="Sprint: #{sprint.name}">
+						<p:chart type="line" model="#{burndownController.getBurndownChart(sprint)}" style="height:400px;"/>
+					</p:tab>
+				</p:tabView>
+			</h:form>
+		</article>
+	</ui:define>
+</ui:composition>
+</html>

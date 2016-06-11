@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['team.addMember']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="addMemberForm">
+		<p:panelGrid id="addMemberGrid" columns="3" layout="grid" style="width:100%">
+		
+			<h:outputText value="#{msg['team.email']}:*" />
+			<p:inputText id="email" value="#{selectedMember.email}" required="true" />
+			<p:message for="email" display="icon"/>
+			
+			<h:outputText value="#{msg['team.password']}:*" />
+			<p:password id="password1" value="#{selectedMember.password}" match="password2" required="true"/>
+			<p:message for="password1" display="icon"/>
+			
+			<h:outputText value="#{msg['team.passwordRepeat']}:*" />
+			<p:password id="password2" value="#{selectedMember.password}" required="true"/>
+			<p:message for="password1" display="icon"/>
+			
+			<h:outputText value="#{msg['team.role']}:*" />
+			<p:selectOneMenu id="roles" value="#{selectedMember.role}" style="width:160px" required="true">
+                <f:selectItem itemLabel="#{msg['team.selectRole']}" itemValue="" noSelectionOption="true"  />
+                <f:selectItems value="#{selectedMember.roles}" />
+            </p:selectOneMenu>
+            <p:message for="roles" display="icon"/>
+            
+			<h:outputText value="#{msg['team.firstname']}:" />
+			<p:inputText id="firstname" value="#{selectedMember.firstname}" required="true"/>
+			<p:message for="firstname" display="icon"/>
+			
+			<h:outputText value="#{msg['team.lastname']}:" />
+			<p:inputText id="lastname" value="#{selectedMember.lastname}" required="true"/>
+			<p:message for="lastname" display="icon"/>
+			
+			<h:outputText value="#{msg['team.phone']}:" />
+			<p:inputText id="phone" value="#{selectedMember.phone}" />
+			<p:message for="phone" display="icon"/>
+			
+			<h:outputText id="department" value="#{msg['team.department']}:" />
+			<p:inputText value="#{selectedMember.department}" />
+			<p:message for="department" display="icon"/>	
+					
+		    <f:facet name="footer">
+				<p:commandButton id="savePerson" value="#{msg['team.save']}" actionListener="#{teamController.doAddMemberSave}" icon="ui-icon-check" update="addMemberGrid"/>
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

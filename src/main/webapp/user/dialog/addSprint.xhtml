@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['sprint.addSprint']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="addSprintForm">
+		<p:panelGrid id="addSprintGrid" columns="3" layout="grid" >
+		
+			<h:outputText value="#{msg['sprint.name']}:*" />
+			<p:inputText id="name" value="#{selectedSprint.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['sprint.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedSprint.description}"/>
+			<p:message for="description" display="icon"/>
+			
+			<h:outputText value="#{msg['sprint.startDate']}:" />
+			<p:calendar id="startdate" mindate="calwidget.today()" pattern="dd.MM.yyyy" value="#{selectedSprint.start}" required="true"/>
+			<p:message for="startdate" display="icon"/>	
+			
+			<h:outputText value="#{msg['sprint.endDate']}:" />
+			<p:calendar id="enddate" mindate="calwidget.today()" pattern="dd.MM.yyyy" value="#{selectedSprint.end}" required="true"/>
+			<p:message for="enddate" display="icon"/>		
+			
+			<f:facet name="footer">
+				<p:commandButton id="saveSprint" value="#{msg['sprint.save']}" actionListener="#{sprintController.doAddSprintSave()}" icon="ui-icon-check" update="addSprintGrid" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

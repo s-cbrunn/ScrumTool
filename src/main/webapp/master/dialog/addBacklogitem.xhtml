@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['backlog.addBacklogitem']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="addBacklogitemForm">
+		<p:panelGrid id="addBacklogitemGrid" columns="3" layout="grid" style="width:100%" >
+		
+			<h:outputText value="#{msg['backlog.name']}:*" />
+			<p:inputText id="thema" value="#{selectedBacklogitem.thema}" required="true"/>
+			<p:message for="thema" display="icon"/>
+			
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<p:inputTextarea id="story" rows="6" cols="23" value="#{selectedBacklogitem.story}" required="true"/>
+			<p:message for="story" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.accept']}:" />
+			<p:inputTextarea id="accept" rows="6" cols="23" value="#{selectedBacklogitem.accept}" />
+			<p:message for="accept" display="icon"/>	
+			
+			<h:outputText value="#{msg['backlog.type']}:" />
+			<p:selectOneMenu id="types" value="#{selectedBacklogitem.type}" style="width:160px" required="true">
+                <f:selectItems value="#{selectedBacklogitem.types}" />
+            </p:selectOneMenu>
+            <p:message for="types" display="icon"/>
+            
+            <h:outputText value="#{msg['backlog.estimate']}:" />
+			<p:inputText id="estimate" value="#{selectedBacklogitem.estimate}" >
+				<f:validateDoubleRange minimum="1" maximum="99999" />
+			</p:inputText>
+			<p:message for="estimate" display="icon"/>
+			
+			<f:facet name="footer">
+				<p:commandButton id="saveBacklog" value="#{msg['backlog.save']}" actionListener="#{backlogController.doAddBacklogitemSave()}" icon="ui-icon-check" update="addBacklogitemGrid" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

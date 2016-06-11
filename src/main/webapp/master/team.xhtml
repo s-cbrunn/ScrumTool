@@ -1,0 +1,89 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<ui:composition template="/template.xhtml">
+	<ui:define name="title">#{msg['team.title']}</ui:define>
+	<ui:define name="content">
+		
+		<h1>#{msg['team.header']}</h1>
+		
+		<p:growl widgetVar="growl" showDetail="true" life="3000"/>
+		
+		<article>
+			<h:form id="menubar">
+				<p:commandButton  id="addPerson" value="#{msg['team.addMember']}" actionListener="#{teamController.doAddMember}" icon="ui-icon-circle-plus" rendered="#{request.isUserInRole('Master')}" />
+				<p:commandButton  id="addTeam"   value="#{msg['team.addTeam']}"  actionListener="#{teamController.doAddTeam}"   icon="ui-icon-circle-plus" rendered="#{request.isUserInRole('Master')}" />
+			</h:form>
+		</article>
+		
+		<p:socket onMessage="handleMessage" channel="/teamNotify" >
+      		<p:ajax update=":teamMemberForm" />
+		</p:socket>
+       			
+		
+		<article> 
+			<h:form id="teamMemberForm">
+				<p:fieldset id="availableTeamMemberField" legend="#{msg['team.availableMembers']}"  >
+					<p:dataGrid id="availableTeamMember" var="member" value="${members}" emptyMessage="#{msg['team.emptyMessage']}" columns="6" layout="grid" rows="12" paginator="true" rowIndexVar="rowIndex">
+						<h:panelGrid onmousedown="rc_#{rowIndex}()" style="width:100%" >
+						<p:panel id="personPanel" header="#{member.lastname}" style="text-align:center;"  widgetVar="rc">
+                			<h:panelGrid columns="1" style="width:100%" >
+                				<h:outputText value="#{member.firstname}" />
+                   				<p:graphicImage value="../resources/img/user.png" />
+                   				<p:panelGrid  style="width:100%">
+                   					<p:commandLink id="showMemberCommand" icon="ui-icon-search" action="#{teamController.doShowMember(member)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"  />
+									<p:commandLink id="deleteMemberCommand" icon="ui-icon-trash" action="#{teamController.doDeleteMember(member)}" update=":teamMemberForm"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;" rendered="#{request.isUserInRole('Master')}" />
+               					</p:panelGrid> 
+                			</h:panelGrid>
+                			<p:draggable revert="true" stack=".ui-panel" rendered="#{request.isUserInRole('Master')}" />
+            			</p:panel>
+            			</h:panelGrid>
+            			<p:remoteCommand name="rc_#{rowIndex}" actionListener="#{teamController.doSelectMember(member)}"/> 
+					</p:dataGrid>
+					<p:droppable>
+					    <f:attribute name="initialTeam" value="null"/>
+         				<p:ajax listener="#{teamController.doDropMember}" />  
+    				</p:droppable>
+				</p:fieldset>
+
+				
+				<p:separator style="margin-top:20px;"/>
+				
+				<ui:repeat var="team" value="#{teams}" >
+					<p:fieldset id="availableTeam" legend="#{msg['team.project']}: #{team.name}" >  
+  						<p:dataGrid id="availableTeamGrid"  var="member" value="#{team.members}" emptyMessage="#{msg['team.emptyMessage']}" columns="6" layout="grid" rows="12" rowIndexVar="#{member.id}" > 
+						 	<h:panelGrid onmousedown="rc_#{member.id}()" style="width:100%">
+						 	<p:panel id="teamPanel" header="#{member.lastname}" style="text-align:center">
+                				<h:panelGrid columns="1" style="width:100%">
+                   					<h:outputText value="#{member.firstname}" />
+                   					<p:graphicImage value="../resources/img/user.png" />
+									<p:commandLink id="showMemberCommand" icon="ui-icon-search" action="#{teamController.doShowMember(member)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
+                				</h:panelGrid>
+                				<p:draggable revert="true" stack=".ui-panel"  rendered="#{request.isUserInRole('Master')}" />
+            				</p:panel>
+           					</h:panelGrid>
+           					<p:remoteCommand name="rc_#{member.id}" actionListener="#{teamController.doSelectMember(member)}"/> 
+            				<f:facet name="footer" >
+     							<p:commandButton id="deleteTeamCommand" icon="ui-icon-trash" action="#{teamController.doDeleteTeam(team)}" update=":teamMemberForm" rendered="#{request.isUserInRole('Master')}" />  
+    							<p:commandButton id="detailTeamCommand" icon="ui-icon-search" action="#{teamController.doShowTeam(team)}" update=":teamMemberForm" />
+    						</f:facet>
+						</p:dataGrid>
+					</p:fieldset>
+					<p:droppable for="availableTeam">
+					    <f:attribute name="team" value="#{team}"/>
+         				<p:ajax listener="#{teamController.doDropMember}" />  
+    				</p:droppable>	
+					<p:spacer height="30"/>
+				</ui:repeat>
+				
+			</h:form>
+			</article>
+		    	
+	</ui:define>
+</ui:composition>
+</html>

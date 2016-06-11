@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+   
+<h:head>
+<title>
+</title>
+  
+</h:head>
+<body>
+	
+	<p:growl widgetVar="growl" showDetail="true" />
+<h:form>
+    <p:panel header="Growl">
+        <h:panelGrid columns="2">
+        </h:panelGrid>
+        <p:commandButton value="Send" actionListener="#{teamController.testi()}" />
+    </p:panel>
+</h:form>
+<p:socket onMessage="handleMessage" channel="/notify" />
+<script type="text/javascript">
+function handleMessage(facesmessage) {
+    facesmessage.severity = 'info';
+    PF('growl').show([facesmessage]);
+}
+</script>
+
+</body>
+</html>

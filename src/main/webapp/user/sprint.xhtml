@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+
+<ui:composition template="/template.xhtml">
+	<ui:define name="title">#{msg['sprint.title']}</ui:define>
+
+	<ui:define name="content">
+		<h1 id="webtitle">#{msg['sprint.header']}</h1>
+
+		<p:growl widgetVar="growl" showDetail="true" life="3000" />
+
+		<p:socket onMessage="handleMessage" channel="/sprintNotify">
+			<p:ajax update=":sprintForm" />
+		</p:socket>
+				
+		<article>
+			<h:form id="sprintForm" >
+				<p:tabView id="sprintTabView" scrollable="true" var="backlog" value="#{backlogs}" activeIndex="#{sprintController.activeIndex}">
+					<p:ajax event="tabChange" listener="#{sprintController.onTabChange}" update=":sprintForm"/>
+					<p:tab id="sprintTab" title="Backlog: #{backlog.name}" >
+						<p:panelGrid id="sprintGrid" columns="2" layout="grid" style="width:100%; margin-top:10px" >
+							
+							<p:fieldset legend="Backlogitems" style="width:80%">
+        						<p:dataGrid var="backlogitem" value="#{backlog.items}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="3" layout="grid" rowIndexVar="rowIndex">
+        							<h:panelGrid onmousedown="rc_#{rowIndex}()" style="width:100%" >
+        								<p:panel header="#{backlogitem.thema}" style="text-align:center;"  widgetVar="rc" >
+        									<h:panelGrid columns="1" style="width:100px" >
+        										<h:outputText value="#{backlogitem.type}" />
+                								<h:outputText value="#{backlogitem.estimate}" />
+                								<p:commandLink id="showBacklogitemCommand" icon="ui-icon-search" action="#{sprintController.doShowBacklogitem(backlogitem)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;" />
+                							</h:panelGrid>
+                							<p:draggable revert="true" stack=".ui-panel" />
+        								</p:panel>
+        							</h:panelGrid>
+        							<p:remoteCommand name="rc_#{rowIndex}" actionListener="#{sprintController.doSelectBacklogitem(backlogitem)}"/> 	
+        							<f:facet name="footer" >
+        								<p:commandButton id="addSprint" actionListener="#{sprintController.doAddSprint(backlog)}" value="#{msg['sprint.addSprint']}" icon="ui-icon-circle-plus" />  
+        							</f:facet>
+        						</p:dataGrid>
+        					</p:fieldset>
+			
+							<p:accordionPanel value="#{backlog.sprints}" var="sprint" activeIndex="#{sprintController.accordionIndex}" >
+								<p:ajax event="tabChange" listener="#{sprintController.onAccordionChange}" update=":sprintForm"/>
+        						<p:tab title="Sprint: #{sprint.name} (#{sprint.convertStartDate} - #{sprint.convertEndDate})" >
+        							<p:dataTable var="item" value="#{sprint.backlogitems}" >
+        								<p:column style="width:20px">
+                							<p:commandLink icon="ui-icon-arrowreturn-1-w" action="#{sprintController.doRemoveBacklogitemSprint(item)}"  styleClass="ui-icon ui-icon-arrowreturn-1-w" update=":sprintForm" disabled="#{sprint.disable}"/>
+           								</p:column>
+        								<p:column headerText="#{msg['sprint.thema']}">
+                							<h:outputText value="#{item.thema}" />
+            							</p:column>
+            							<p:column headerText="#{msg['sprint.type']}">
+                							<h:outputText value="#{item.type}" />
+            							</p:column>
+            							<p:column headerText="#{msg['sprint.estimate']}">
+                							<h:outputText value="#{item.estimate}" />
+            							</p:column>
+            							<p:column style="width:20px">
+        									<p:commandLink id="showBacklogitemCommand" icon="ui-icon-search" action="#{sprintController.doShowBacklogitem(item)}" styleClass="ui-icon ui-icon-search" />
+        								</p:column>
+        								<f:facet name="footer" >
+     										<p:commandButton id="deleteSprint" actionListener="#{sprintController.doDeleteSprint(sprint)}" value="#{msg['sprint.deleteSprint']}" icon="ui-icon-trash" rendered="#{request.isUserInRole('Master')}" disabled="#{sprint.disable}"/> 
+     										<p:commandButton id="detailSprint" icon="ui-icon-search" action="#{sprintController.doShowSprint(sprint)}" update=":sprintForm" /> 
+     										<p:commandButton id="startSprint" actionListener="#{sprintController.doStartSprint(sprint)}" value="#{msg['sprint.startSprint']}" icon="ui-icon-play" update=":sprintForm" rendered="#{request.isUserInRole('Master')}" disabled="#{sprint.disable}"/>
+     										<p:spacer width="50" height="10"/>
+    										<p:outputLabel value="Status: #{sprint.status}" /> 
+    									</f:facet>
+        							</p:dataTable>
+        							<p:droppable disabled="#{sprint.disable}">
+        								<f:attribute name="sprint" value="#{sprint}"/>
+         								<p:ajax listener="#{sprintController.doDropBacklogitem}" />  
+    								</p:droppable>
+        						</p:tab>
+        					</p:accordionPanel>
+        				</p:panelGrid>
+                 	</p:tab>
+                 	
+				</p:tabView>
+			</h:form>
+		</article>
+
+
+	</ui:define>
+</ui:composition>
+</html>

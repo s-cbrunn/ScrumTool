@@ -1,0 +1,31 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+<h:head>
+<title>#{msg['loginFailure.title']}</title>
+	<link rel="stylesheet" href="../resources/css/signin.css" />
+</h:head>
+<body>
+	<h:form id="login" onsubmit="document.getElementById('login').action='j_security_check';" prependId="false">
+		<h1>#{msg['loginFailure.header']}</h1>
+		<p id="error">#{msg['loginFailure.error']}</p>
+		<fieldset id="inputs">
+			<p:inputText id="j_username" name="j_username" styleClass="input"/>
+			<p:watermark for="j_username" value="#{msg['loginFailure.inputTextEmail']}" id="email"/>
+			<p:password id="j_password" name="j_password" styleClass="input"/>
+			<p:watermark for="j_password" value="#{msg['loginFailure.inputTextPassword']}" id="password" />
+		</fieldset>
+		<fieldset id="actions">
+			<p:commandButton id="submit" value="#{msg['loginFailure.btnLogin']}"  ajax="false"/>
+		</fieldset>
+		<fieldset id="registration">
+			<p:commandLink id="newAccount" value="#{msg['loginFailure.btnCreateAccount']}" styleClass="signup"/>
+		</fieldset>
+	</h:form>
+</body>
+</html>

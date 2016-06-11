@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['taskboard.addTask']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="addTaskForm">
+		<p:panelGrid id="addTaskGrid" columns="3" layout="grid" >
+		
+			<h:outputText value="#{msg['taskboard.name']}:*" />
+			<p:inputText id="name" value="#{selectedTask.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['taskboard.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedTask.description}"/>
+			<p:message for="description" display="icon"/>	
+			
+			<f:facet name="footer">
+				<p:commandButton id="saveTask" value="#{msg['taskboard.save']}" actionListener="#{taskboardController.doAddSaveTask()}" icon="ui-icon-check" update="addTaskGrid" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

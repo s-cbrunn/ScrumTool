@@ -1,0 +1,129 @@
+@CHARSET "UTF-8";
+
+header {
+	width: 100%;
+	height: 150px;
+	overflow: hidden;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 999;
+	background-color: #fff;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fff),
+		to(#eee));
+	background-image: -webkit-linear-gradient(top, #fff, #eee);
+	background-image: -moz-linear-gradient(top, #fff, #eee);
+	background-image: -ms-linear-gradient(top, #fff, #eee);
+	background-image: -o-linear-gradient(top, #fff, #eee);
+	background-image: linear-gradient(top, #fff, #eee);
+	-webkit-transition: height 0.3s;
+	-moz-transition: height 0.3s;
+	-ms-transition: height 0.3s;
+	-o-transition: height 0.3s;
+	transition: height 0.3s;
+	-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 1px 1px
+		rgba(0, 0, 0, .2), 0 3px 0 #fff, 0 4px 0 rgba(0, 0, 0, .2), 0 6px 0
+		#fff, 0 7px 0 rgba(0, 0, 0, .2);
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, .2), 0
+		3px 0 #fff, 0 4px 0 rgba(0, 0, 0, .2), 0 6px 0 #fff, 0 7px 0
+		rgba(0, 0, 0, .2);
+}
+
+header:before {
+	content: '';
+	position: absolute;
+	border-bottom: 1px dashed #ccc;
+	bottom: 5px;
+	left: 0px;
+	right: 0px;
+}
+
+#logout{
+	margin-top: 160px;
+	margin-left: 95%;
+	color: #666666; 
+	
+}
+
+nav {
+	display: inline-block;
+	float: right;
+}
+
+nav a {
+	line-height: 150px;
+	margin-left: 2px;
+	margin-right: 30px;
+	color: #666666;
+	font-weight: 700;
+	font-size: 18px;
+	visited: text-decoration: none;
+	text-decoration: none;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	-ms-transition: all 0.3s;
+	-o-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+nav a:hover {
+	color: #C9CACB;
+}
+
+header img {
+	margin-left: 40px;
+	margin-top: 13px;
+}
+
+body {
+	font: 12px 'Lucida Sans Unicode', 'Trebuchet MS', Arial, Helvetica;
+	margin: 0;
+	background-color: #ebeef2;
+}
+
+section {height 100%;
+	margin-left: 50px;
+	margin-right: 50px;
+    color: #666666;
+}
+
+footer {
+	text-align: center;
+	margin: auto;
+	width: 100%;
+	position: absolute;
+	bottom: 5px;
+	color: gray;
+}
+
+
+
+article {
+	margin-top: 10px;
+	border-color: #666666;
+	border-width: 0px;
+	
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+
+#menubar{
+	margin-top:20px;
+	margin-bottom: 30px;
+}
+
+.preformatted {
+    white-space: pre-wrap;
+}
+
+.logout {
+	text-decoration: none;
+	color: #666666;
+}
+
+.logout:hover {
+	text-decoration: none;
+	color: #C9CACB;
+}

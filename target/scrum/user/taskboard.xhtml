@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<ui:composition template="/template.xhtml">
+	<ui:define name="title">#{msg['taskboard.title']}</ui:define>
+
+	<ui:define name="content">
+		<h1 id="webtitle">#{msg['taskboard.header']}</h1>
+		
+		<p:growl widgetVar="growl" showDetail="true" life="3000" />
+
+		<p:socket onMessage="handleMessage" channel="/taskNotify">
+			<p:ajax update=":taskForm" />
+		</p:socket>
+		
+		<article>
+			<h:form id="taskForm">
+				<p:tabView id="taskTabView" scrollable="true" var="sprint" value="#{sprints}" activeIndex="#{taskboardController.activeIndex}">
+					<p:ajax event="tabChange" listener="#{taskboardController.onTabChange}" update=":taskForm"/>
+					<p:tab id="taskTab" title="Sprint: #{sprint.name}">
+					<article>
+						<p:commandButton  id="closeSprint" value="#{msg['taskboard.closeSprint']}" actionListener="#{taskboardController.doCloseSprint(sprint)}" icon="ui-icon-locked" rendered="#{request.isUserInRole('Master')}" update=":taskForm" />
+					</article>
+						<p:panelGrid id="sprintGrid" columns="4" layout="grid" style="width:100%; margin-top:10px" >
+							
+							<p:fieldset legend="Backlogitems" style="width:70%;">
+        						<p:dataGrid var="backlogitem" value="#{sprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid">
+        								<p:panel header="#{backlogitem.thema}" style="text-align:center;">
+        									<p:panelGrid style="text-align:center;" >
+        										<h:outputText value="#{backlogitem.type}" style="margin:0 auto;"/>
+                								<p:commandLink id="showBacklogitemCommand" icon="ui-icon-search" action="#{taskboardController.doShowBacklogitem(backlogitem)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"/>
+                								<p:commandButton id="addTask" actionListener="#{taskboardController.doAddTask(backlogitem)}"  value="#{msg['taskboard.createTask']}" icon="ui-icon-circle-plus" style="margin:0 auto;" />  
+                							</p:panelGrid>
+        								</p:panel>
+        						</p:dataGrid>
+        					</p:fieldset>
+        					
+        					
+        					<p:fieldset id="ToDo" legend="To Do" style="width:80%;">
+        						<p:dataGrid var="backlogitem" value="#{sprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" >
+        							<ui:repeat var="task" value="#{backlogitem.tasks}" >
+        								<h:panelGrid onmousedown="rc_#{task.id}()" style="width:100%" >
+											<p:panel header="#{task.name}" style="text-align:center;"  widgetVar="rc" rendered="#{task.status == 'ToDo'}">
+        										<p:panelGrid style="text-align:center;" >
+        											<h:outputText value="Backlogitem" style="margin:0 auto;text-decoration:underline"/><br />
+        											<h:outputText value="#{task.backlogitem.thema}" style="margin:0 auto;"/>
+                									<p:commandLink id="showTaskCommandToDo" icon="ui-icon-search" action="#{taskboardController.doShowTask(task)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"/>
+                									<p:commandLink id="deleteTaskCommandToDo" icon="ui-icon-trash" action="#{taskboardController.doDeleteTask(task)}" update=":taskForm"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;"  />
+                								</p:panelGrid>
+                								<p:draggable revert="true" stack=".ui-panel" />
+        									</p:panel>
+        								</h:panelGrid>
+        								<p:remoteCommand name="rc_#{task.id}" actionListener="#{taskboardController.doSelectedTask(task)}"/>
+									</ui:repeat>
+        						</p:dataGrid>
+        						<p:droppable for="ToDo">
+         							<p:ajax listener="#{taskboardController.doDropToDo}" />  
+    							</p:droppable>	
+        					</p:fieldset>
+        					
+        					<p:fieldset id="InProgress" legend="In Progress" style="width:80%">
+        						<p:dataGrid var="backlogitem" value="#{sprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" rowIndexVar="rowIndex">
+        							<ui:repeat var="task" value="#{backlogitem.tasks}" >
+        								<h:panelGrid onmousedown="rc_#{task.id}()" style="width:100%" >
+        									<p:panel header="#{task.name}" style="text-align:center;"  widgetVar="rc" rendered="#{task.status == 'InProgress'}">
+        										<p:panelGrid style="text-align:center;" >
+        											<h:outputText value="Backlogitem" style="margin:0 auto;text-decoration:underline"/><br />
+        											<h:outputText value="#{task.backlogitem.thema}" style="margin:0 auto;"/>
+                									<p:commandLink id="showTaskCommandInProgress" icon="ui-icon-search" action="#{taskboardController.doShowTask(task)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"/>
+                									<p:commandLink id="deleteTaskCommandInProgress" icon="ui-icon-trash" action="#{taskboardController.doDeleteTask(task)}" update=":taskForm"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;"  />
+                								</p:panelGrid>
+                								<p:draggable revert="true" stack=".ui-panel" />
+        									</p:panel>
+        								</h:panelGrid>
+        								<p:remoteCommand name="rc_#{task.id}" actionListener="#{taskboardController.doSelectedTask(task)}"/> 	
+        							</ui:repeat>
+        						</p:dataGrid>
+        						<p:droppable for="InProgress" >
+         							<p:ajax listener="#{taskboardController.doDropInProgress}"/>  
+    							</p:droppable>	
+        					</p:fieldset>
+        						
+        					<p:fieldset id="Done" legend="Done" style="width:80%">
+        						<p:dataGrid var="backlogitem" value="#{sprint.backlogitems}" emptyMessage="#{msg['sprint.emptyMessage']}" columns="1" layout="grid" rowIndexVar="rowIndex">
+        							<ui:repeat var="task" value="#{backlogitem.tasks}" >
+        								<h:panelGrid onmousedown="rc_#{task.id}()" style="width:100%" >
+        									<p:panel header="#{task.name}" style="text-align:center;"  widgetVar="rc" rendered="#{task.status == 'Done'}">
+        										<p:panelGrid style="text-align:center;" >
+        											<h:outputText value="Backlogitem" style="margin:0 auto;text-decoration:underline"/><br />
+        											<h:outputText value="#{task.backlogitem.thema}" style="margin:0 auto;"/>
+                									<p:commandLink id="showTaskCommandDone" icon="ui-icon-search" action="#{taskboardController.doShowTask(task)}"  styleClass="ui-icon ui-icon-search" style="margin:0 auto;"/>
+                									<p:commandLink id="deleteTaskCommandDone" icon="ui-icon-trash" action="#{taskboardController.doDeleteTask(task)}" update=":taskForm"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;"  />
+                								</p:panelGrid>
+                								<p:draggable revert="true" stack=".ui-panel" />
+        									</p:panel>
+        								</h:panelGrid>
+        								<p:remoteCommand name="rc_#{task.id}" actionListener="#{taskboardController.doSelectedTask(task)}"/> 	
+        							</ui:repeat>
+        						</p:dataGrid>
+        						<p:droppable for="Done">
+         							<p:ajax listener="#{taskboardController.doDropDone}" />  
+    							</p:droppable>	
+        					</p:fieldset>
+        					
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</h:form>
+		</article>
+	</ui:define>
+</ui:composition>
+</html>

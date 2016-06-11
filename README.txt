@@ -1,0 +1,1 @@
+Konzeption und Umsetzung eines Softwarewerkzeugs für verteilte Scrum-Projekte

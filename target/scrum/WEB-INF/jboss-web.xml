@@ -1,0 +1,3 @@
+<jboss-web>
+    <security-domain>scrum</security-domain>
+</jboss-web>

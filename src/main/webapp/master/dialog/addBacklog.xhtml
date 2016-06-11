@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['backlog.addBacklog']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="addBacklogForm">
+		<p:panelGrid id="addBacklogGrid" columns="3" layout="grid" >
+		
+			<h:outputText value="#{msg['backlog.name']}:*" />
+			<p:inputText id="name" value="#{selectedBacklog.name}" required="true"/>
+			<p:message for="name" display="icon"/>
+			
+			<h:outputText value="#{msg['backlog.description']}:" />
+			<p:inputTextarea id="description" rows="6" cols="23" value="#{selectedBacklog.description}"/>
+			<p:message for="description" display="icon"/>	
+			
+			<f:facet name="footer">
+				<p:commandButton id="saveBacklog" value="#{msg['backlog.save']}" actionListener="#{backlogController.doAddBacklogSave}" icon="ui-icon-check" update="addBacklogGrid" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+ <servlet>
+  <servlet-name>Push Servlet</servlet-name>
+  <servlet-class>org.primefaces.push.PushServlet</servlet-class>
+  <async-supported>true</async-supported>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>Push Servlet</servlet-name>
+  <url-pattern>/primepush/*</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+ <servlet-name>javax.ws.rs.core.Application</servlet-name>
+ <url-pattern>/rest/*</url-pattern>
+ </servlet-mapping>
+ <welcome-file-list>
+  <welcome-file>/index.html</welcome-file>
+ </welcome-file-list>
+ <error-page>
+  <error-code>403</error-code>
+  <location>/user/noAuthentication.jsf</location>
+ </error-page>
+ <security-constraint>
+  <display-name>Master access</display-name>
+  <web-resource-collection>
+   <web-resource-name>Master</web-resource-name>
+   <url-pattern>/master/backlog.jsf</url-pattern>
+   <url-pattern>/master/team.jsf</url-pattern>
+   <url-pattern>/master/dialog/*</url-pattern>
+   <url-pattern>/user/overview.jsf</url-pattern>
+   <url-pattern>/user/sprint.jsf</url-pattern>
+   <url-pattern>/user/taskboard.jsf</url-pattern>
+   <url-pattern>/user/burndown.jsf</url-pattern>
+   <url-pattern>/rest/master/*</url-pattern>
+   <url-pattern>/rest/user/*</url-pattern>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>Master</role-name>
+  </auth-constraint>
+  <user-data-constraint>
+   <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+  </user-data-constraint>
+ </security-constraint>
+ <security-constraint>
+  <display-name>Teammember access</display-name>
+  <web-resource-collection>
+   <web-resource-name>Teammember</web-resource-name>
+   <url-pattern>/user/overview.jsf</url-pattern>
+   <url-pattern>/user/sprint.jsf</url-pattern>
+   <url-pattern>/user/taskboard.jsf</url-pattern>
+   <url-pattern>/user/burndown.jsf</url-pattern>
+   <url-pattern>/rest/user/*</url-pattern>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>Teammember</role-name>
+  </auth-constraint>
+  <user-data-constraint>
+   <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+  </user-data-constraint>
+ </security-constraint>
+ <security-constraint>
+  <display-name>Stakeholder access</display-name>
+  <web-resource-collection>
+   <web-resource-name>Stakeholder</web-resource-name>
+   <url-pattern>/user/overview.jsf</url-pattern>
+   <url-pattern>/master/team.jsf</url-pattern>
+   <url-pattern>/master/backlog.jsf</url-pattern>
+   <url-pattern>/master/dialog/*</url-pattern>
+   <url-pattern>/rest/master/*</url-pattern>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>Stakeholder</role-name>
+  </auth-constraint>
+  <user-data-constraint>
+   <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+  </user-data-constraint>
+ </security-constraint>
+ <security-constraint>
+  <display-name>Product Owner access</display-name>
+  <web-resource-collection>
+   <web-resource-name>ProductOwner</web-resource-name>
+   <url-pattern>/user/overview.jsf</url-pattern>
+   <url-pattern>/master/team.jsf</url-pattern>
+   <url-pattern>/master/backlog.jsf</url-pattern>
+   <url-pattern>/master/dialog/*</url-pattern>
+   <url-pattern>/rest/master/*</url-pattern>
+  </web-resource-collection>
+  <auth-constraint>
+   <role-name>Product_Owner</role-name>
+  </auth-constraint>
+  <user-data-constraint>
+   <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+  </user-data-constraint>
+ </security-constraint>
+ <login-config>
+  <auth-method>FORM</auth-method>
+  <form-login-config>
+   <form-login-page>/login.jsf</form-login-page>
+   <form-error-page>/loginFailure.jsf</form-error-page>
+  </form-login-config>
+ </login-config>
+ <security-role>
+  <role-name>Teammember</role-name>
+ </security-role>
+ <security-role>
+  <role-name>Stakeholder</role-name>
+ </security-role>
+ <security-role>
+  <role-name>Product_Owner</role-name>
+ </security-role>
+ <security-role>
+  <role-name>Master</role-name>
+ </security-role>
+</web-app>

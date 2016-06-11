@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['team.member']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="showTeamForm">
+		<p:outputPanel id="teamDetail" style="text-align:left;" >
+            			<p:panelGrid columns="2" layout="grid" >
+            				<h:outputText value="#{msg['team.teamname']}:" />
+							<h:outputText value="#{selectedTeam.name}" /> 
+                			<h:outputText value="#{msg['team.description']}:" style="white-space: pre-wrap"/>
+							<h:outputText value="#{selectedTeam.description}" styleClass="preformatted"/>  
+							<f:facet name="footer">
+								<p:commandButton id="okMember" value="#{msg['team.ok']}" actionListener="#{teamController.doCancel()}" icon="ui-icon-check" />
+							</f:facet>
+            			</p:panelGrid>
+        			</p:outputPanel>
+		</h:form>
+
+</h:body>
+
+</html>

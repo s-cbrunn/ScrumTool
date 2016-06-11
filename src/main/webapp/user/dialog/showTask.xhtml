@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['taskboard.showTask']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="showTaskForm">
+		<p:panelGrid id="showTaskGrid" columns="2" layout="grid" >
+		
+			<h:outputText value="#{msg['taskboard.name']}:" />
+			<h:outputText id="name" value="#{selectedTask.name}" required="true"/>
+			
+			<h:outputText value="#{msg['taskboard.description']}:" />
+			<h:outputText id="description" value="#{selectedTask.description}"/>
+			
+			<f:facet name="footer">
+				<p:commandButton id="okTask" value="#{msg['taskboard.ok']}" actionListener="#{taskboardController.doCancel()}" icon="ui-icon-check" update="showTaskGrid" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

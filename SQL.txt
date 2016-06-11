@@ -1,0 +1,4 @@
+Benutzername: admin@admin.de Passwort: admin
+
+insert into member ( email, department, firstname, id, lastname, password, phone, role ) values ('admin@admin', 'IT', 'Admin', '3b408cb48548b5037822c10eb0976b3cbf2cee3bf9c708796bf03941fbecd80f', 'Superuser', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '123','Master');
+

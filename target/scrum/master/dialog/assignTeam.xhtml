@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:head>
+	<title>#{msg['backlog.assignTeam']}</title>
+	<style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+</h:head>
+
+<h:body>
+
+<h:form id="assignTeamForm">
+		<p:panelGrid id="assignTeamGrid" columns="2" layout="grid" >
+
+			<p:outputLabel for="team" value="#{msg['backlog.team']}:*" />
+			
+            
+            <p:selectOneMenu id="team" value="#{selectedBacklog.team}" converter="teamConverter" required="false">
+            <f:selectItem itemLabel="#{selectedBacklog.team}" />
+            <f:selectItems value="#{teams}" var="team" itemLabel="#{team.name}" itemValue="#{team}" />
+  
+        </p:selectOneMenu>
+           
+			<f:facet name="footer">
+				<p:commandButton type="submit" id="saveAssignTeam" value="#{msg['backlog.save']}" actionListener="#{backlogController.doAssignTeamSave()}" icon="ui-icon-check" update="assignTeamForm" />
+			</f:facet>
+		</p:panelGrid>
+		</h:form>
+
+</h:body>
+
+</html>

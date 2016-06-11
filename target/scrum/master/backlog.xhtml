@@ -1,0 +1,82 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<ui:composition template="/template.xhtml">
+	<ui:define name="title">#{msg['backlog.title']}</ui:define>
+	<ui:define name="content">
+	
+		<h1>#{msg['backlog.header']}</h1>
+		
+		<p:growl widgetVar="growl" showDetail="true" life="3000"/>
+		
+		<article>
+			<h:form id="menubar">
+				<p:commandButton  id="addBacklog" value="#{msg['backlog.addBacklog']}" actionListener="#{backlogController.doAddBacklog()}" icon="ui-icon-circle-plus" rendered="#{request.isUserInRole('Master')}" />
+			</h:form>
+		</article>
+		
+		<p:socket onMessage="handleMessage" channel="/backlogNotify" >
+      		<p:ajax update=":backlogForm" />
+		</p:socket>
+		
+		
+		<article> 
+			<h:form id="backlogForm" >
+				<p:accordionPanel var="backlog" value="#{backlogs}" activeIndex="#{backlogController.activeIndex}">
+					<p:ajax event="tabChange" listener="#{backlogController.onTabChange}" />
+        			<p:tab  title="Backlog: #{backlog.name}" >
+        			
+        				<p:dataTable draggableRows="true" draggableColumns="true" var="backlogitem" value="#{backlog.items}" liveResize="true" emptyMessage="Keine Backlogitems vorhanden">
+        					<f:facet name="header">
+        						#{msg['backlog.backlogitem']}
+    						</f:facet>
+    						
+    						<p:column headerText="#{msg['backlog.editBacklogitem']}">
+   	     						<p:commandLink id="editBacklogitem" icon="ui-icon-wrench" action="#{backlogController.doEditBacklogitem(backlogitem)}"  styleClass="ui-icon ui-icon-wrench" style="margin:0 auto;"  />
+    						</p:column> 
+    						
+    						<p:column headerText="#{msg['backlog.thema']}">
+        						<h:outputText value="#{backlogitem.thema}" />
+    						</p:column>
+ 
+    						<p:column headerText="#{msg['backlog.story']}">
+        						<h:outputText value="#{backlogitem.story}" />
+    						</p:column>
+ 
+    						<p:column headerText="#{msg['backlog.accept']}">
+        						<h:outputText value="#{backlogitem.accept}" />
+    						</p:column>
+ 
+   	 						<p:column headerText="#{msg['backlog.type']}">
+   	     						<h:outputText value="#{backlogitem.type}" />
+    						</p:column>
+    						
+    						<p:column headerText="#{msg['backlog.estimate']}">
+   	     						<h:outputText value="#{backlogitem.estimate}" />
+    						</p:column>
+    						
+    						<p:column headerText="#{msg['backlog.delete']}">
+   	     						<p:commandLink id="deleteBacklogitem" icon="ui-icon-trash" action="#{backlogController.doDeleteBacklogitem(backlogitem)}"  styleClass="ui-icon ui-icon-trash" style="margin:0 auto;"  />
+    						</p:column>      						
+    						
+    						<f:facet name="footer" >
+     							<p:commandButton id="deleteBacklogitemCommand" actionListener="#{backlogController.doDeleteBacklog(backlog)}"  icon="ui-icon-trash" rendered="#{request.isUserInRole('Master')}" />  
+     							<p:commandButton id="addBacklogitemCommand" actionListener="#{backlogController.doAddBacklogitem(backlog)}" value="#{msg['backlog.addBacklogitem']}" icon="ui-icon-circle-plus" rendered="#{request.isUserInRole('Master')}" />
+     							<p:commandButton id="showBacklogCommand" actionListener="#{backlogController.doShowBacklog(backlog)}"  icon="ui-icon-search"  />    
+    						    <p:commandButton id="assignTeamCommand" actionListener="#{backlogController.doAssignTeam(backlog)}" value="#{msg['backlog.assignTeam']}" icon="ui-icon-person"  rendered="#{request.isUserInRole('Master')}" />  
+    							<p:spacer width="50" height="10"/>
+    							<p:outputLabel value="Team: #{backlog.team.name}" />
+    						</f:facet>
+						</p:dataTable>
+        			</p:tab>
+    			</p:accordionPanel>
+			</h:form> 
+		</article>			    	
+	</ui:define>
+</ui:composition>
+</html>
